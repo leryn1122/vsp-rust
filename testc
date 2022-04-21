@@ -1,0 +1,8 @@
+#!/usr/bin/env bash
+
+# Just for dev
+cargo run \
+  --quiet \
+  --package vsp \
+  --bin vspc \
+  -- "$@"

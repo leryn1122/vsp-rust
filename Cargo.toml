@@ -1,0 +1,17 @@
+[package]
+name = "vsp"
+version = "0.1.0"
+authors = ["Leryn"]
+edition = "2018"
+description = "A toy language compiler"
+repository = "https://github.com/leryn1122/vsp"
+readme = "README.md"
+keywords = ["compiler"]
+license = "MIT"
+
+[dependencies]
+#clap = "3.1.1"
+#hashbrown = "0.11"
+#log = "0.4.16"
+#log4rs = "1.0.0"
+#url = "2.2.2"
