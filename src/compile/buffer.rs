@@ -1,4 +1,5 @@
-const BUFFER_SIZE: i8 = 5;
+const BUFFER_SIZE: usize = 5;
+// const BUFFER_SIZE: i8 = 2;
 
 /// Buffer, composed of by two char buffer array.
 #[warn(dead_code)]
@@ -21,6 +22,16 @@ impl Buffer {
         }
     }
 
+    /// Returns the capacity
+    pub fn capacity(&self) -> usize {
+        BUFFER_SIZE
+    }
+
+    /// flip the left & right buffer
+    pub fn flip(&mut self) {
+        self.flip = !self.flip;
+    }
+
     pub fn get(&mut self) -> &mut[u8; 1 << BUFFER_SIZE] {
         if self.flip {
             &mut self.buffer_r
@@ -29,8 +40,11 @@ impl Buffer {
         }
     }
 
-    /// flip the left & right buffer
-    pub fn flip(&mut self) {
-        self.flip = !self.flip;
+    pub fn char_at(&mut self, index: usize) -> u8 {
+        if self.flip {
+            self.buffer_r[index]
+        } else {
+            self.buffer_l[index]
+        }
     }
 }
