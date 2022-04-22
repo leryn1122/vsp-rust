@@ -1,3 +1,5 @@
+use std::io::Read;
+
 const BUFFER_SIZE: usize = 5;
 // const BUFFER_SIZE: i8 = 2;
 
@@ -6,8 +8,8 @@ const BUFFER_SIZE: usize = 5;
 pub struct Buffer {
     buffer_r: [u8; 1 << BUFFER_SIZE],
     buffer_l: [u8; 1 << BUFFER_SIZE],
-    read: u16,
-    end: u16,
+    pos: usize,
+    end: usize,
     flip: bool,
 }
 
@@ -16,7 +18,7 @@ impl Buffer {
         Buffer {
             buffer_r: [0u8; 1 << BUFFER_SIZE],
             buffer_l: [0u8; 1 << BUFFER_SIZE],
-            read: 0,
+            pos: 0,
             end: 0,
             flip: false,
         }
@@ -46,5 +48,14 @@ impl Buffer {
         } else {
             self.buffer_l[index]
         }
+    }
+
+    pub fn read(&mut self, readable: &mut std::fs::File) -> Result<usize, ()> {
+        let offset: usize = readable.read(self.get()).unwrap();
+        self.pos = offset;
+
+        println!("{:?}", self.get());
+
+        Ok(offset)
     }
 }

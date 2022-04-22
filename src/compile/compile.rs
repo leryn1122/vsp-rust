@@ -1,5 +1,4 @@
 use std::fs::File;
-use std::io::Read;
 
 use crate::std::gen::Res;
 
@@ -52,15 +51,11 @@ impl Compiler {
         let mut file = File::open(src).unwrap();
 
         let mut buffer: Buffer = Buffer::new();
-        // let mut lexer : Lexer = Lexer::accept(&buffer);
+
         let mut offset: usize;
 
         loop {
-            offset = file.read(buffer.get()).unwrap();
-            // lexer.parse_token();
-
-            eprintln!("{}", offset);
-            eprintln!("{:?}", buffer.get());
+            offset = buffer.read(&mut file).unwrap();
             if 0 == offset {
                 break;
             }
