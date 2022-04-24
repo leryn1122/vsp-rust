@@ -1,13 +1,11 @@
-use super::token::Token;
 
-///
-/// Instance of Lexer holding a Vec of Token
-///
-pub(crate) struct Lexer {
-    readable: Read,
-
-}
-
-impl Lexer {
-
+/// Pattern / mode for lexer:
+///   - Trivial for normal;
+///   - SingleQuoted for character;
+///   - DoubleQuoted for literal string.
+#[derive(PartialEq)]
+pub enum LexerPattern {
+    Trivial,
+    SingleQuoted,
+    DoubleQuoted,
 }

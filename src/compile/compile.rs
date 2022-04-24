@@ -1,12 +1,10 @@
 use std::fs::File;
+use crate::compile::token::Token;
 
 use crate::std::gen::Res;
 
-// use super::ast::ASTNode;
-// use super::ast::ASTParser;
 use super::buffer::Buffer;
-// use super::lexer::Lexer;
-// use super::token::Token;
+use super::lexer::LexerPattern;
 
 pub fn compile_source(src: String) -> Res<()> {
     let compiler: Compiler = Compiler::new();
@@ -53,12 +51,77 @@ impl Compiler {
         let mut buffer: Buffer = Buffer::new();
 
         let mut offset: usize;
+        offset = buffer.read(&mut file).unwrap();
 
-        loop {
-            offset = buffer.read(&mut file).unwrap();
-            if 0 == offset {
-                break;
+        let mut pattern = LexerPattern::Trivial;
+        let mut str_buf: Vec<char> = Vec::with_capacity(1 << 5);
+
+        // TODO offset should have been replaced by len.
+        for i in 0 .. offset {
+            let ch : char = buffer.char_at(i);
+
+            match pattern {
+                LexerPattern::Trivial => {
+                    // Alphabetic or digit ??
+                    if ch.is_alphanumeric() {
+                        str_buf.push(ch);
+                    } else if '"' == ch {
+                        pattern = LexerPattern::DoubleQuoted;
+                    } else if '\'' == ch {
+                        pattern = LexerPattern::SingleQuoted;
+                    } else if ch.is_whitespace() {
+                        if str_buf.len() > 0 {
+                            let mut str = str_buf.iter().collect::<String>();
+                            println!("lexeme  = {}", str);
+                            println!("{:?}", Token::get_token(&str));
+                            str_buf.clear();
+                        }
+                    } else if ch.is_ascii_punctuation() {
+                        if str_buf.len() > 0 {
+                            let mut str = str_buf.iter().collect::<String>();
+                            println!("lexeme  = {}", str);
+                            println!("{:?}", Token::get_token(&str));
+                            str_buf.clear();
+                        }
+                        str_buf.push(ch);
+                    } else {
+                        if str_buf.len() > 0 {
+                            let mut str = str_buf.iter().collect::<String>();
+                            println!("lexeme  = {}", str);
+                            println!("{:?}", Token::get_token(&str));
+                            str_buf.clear();
+                        }
+                    }
+                },
+                // Double quoted
+                //   All characters are appended, expect another quote.
+                LexerPattern::DoubleQuoted => {
+                    if '"' == ch {
+                        let mut str = str_buf.iter().collect::<String>();
+                        println!("literal = {}", str);
+                        println!("{:?}", Token::get_token(&str));
+                        str_buf.clear();
+                        pattern = LexerPattern::Trivial;
+                    } else {
+                        str_buf.push(ch);
+                    }
+                },
+                // Single quoted
+                //   All characters are appended, expect another quote.
+                LexerPattern::SingleQuoted => {
+                    if '\'' == ch {
+                        let mut str = str_buf.iter().collect::<String>();
+                        println!("lexeme  = {}", str);
+                        println!("{:?}", Token::get_token(&str));
+                        str_buf.clear();
+                        pattern = LexerPattern::Trivial;
+                    } else {
+                        str_buf.push(ch);
+                    }
+                }
             }
+
         }
+
     }
 }

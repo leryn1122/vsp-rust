@@ -1,6 +1,6 @@
 use std::io::Read;
 
-const BUFFER_SIZE: usize = 5;
+const BUFFER_SIZE: usize = 8;
 // const BUFFER_SIZE: i8 = 2;
 
 /// Buffer, composed of by two char buffer array.
@@ -24,6 +24,12 @@ impl Buffer {
         }
     }
 
+    #[warn(unused_variables)]
+    pub fn with_capacity(_capacity: usize) -> Buffer {
+        // TODO
+        Buffer::new()
+    }
+
     /// Returns the capacity
     pub fn capacity(&self) -> usize {
         BUFFER_SIZE
@@ -42,7 +48,7 @@ impl Buffer {
         }
     }
 
-    pub fn char_at(&mut self, index: usize) -> u8 {
+    pub fn at(&mut self, index: usize) -> u8 {
         if self.flip {
             self.buffer_r[index]
         } else {
@@ -50,12 +56,21 @@ impl Buffer {
         }
     }
 
+    pub fn char_at(&mut self, index: usize) -> char {
+        let c = self.at(index);
+        // ASCII ??
+        if c & (1<<7) == 0 {
+            c as char
+        } else {
+            // TODO solve non-ascii, for now init as the same as ascii
+            c as char
+        }
+    }
+
+    //
     pub fn read(&mut self, readable: &mut std::fs::File) -> Result<usize, ()> {
         let offset: usize = readable.read(self.get()).unwrap();
         self.pos = offset;
-
-        println!("{:?}", self.get());
-
         Ok(offset)
     }
 }
