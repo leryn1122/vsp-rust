@@ -31,6 +31,7 @@ impl Opt {
         }
     }
 
+    /// Rolling on the cli args to generate a queue of Opt
     pub fn from_args(argc: usize, argv: Vec<String>) -> Vec<Opt> {
         let mut opts: Vec<Opt> = Vec::new();
         for i in 1 .. argc {
@@ -46,8 +47,14 @@ impl Opt {
                 opt.params.push(segment.to_string());
             }
         }
-        println!("{:?}", opts);
         return opts
     }
 
+    pub fn get_name(&self) -> &String {
+        &self.name
+    }
+
+    pub fn get_params(&self) -> &Vec<String> {
+        &self.params
+    }
 }

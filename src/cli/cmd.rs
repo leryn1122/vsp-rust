@@ -1,5 +1,8 @@
 use std::option_env;
 
+/// Return a tuple of <code>argc</code> and <code>argv</code>
+///
+/// 返回 argc 和 argv 的 tuple
 pub fn obtain_args() -> (usize, Vec<String>){
     let argv: Vec<String> = std::env::args().collect();
     let argc: usize = argv.len();

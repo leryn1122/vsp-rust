@@ -1,22 +1,24 @@
 use std::fs::File;
+use hashbrown::HashMap;
+
 use crate::cli::opts::Opt;
-use crate::compile::token::{Token, TokenStream};
 use crate::std::gen::Res;
 
 use super::buffer::Buffer;
 use super::lexer::LexerPattern;
+use super::token::{Token, TokenStream};
 
 ///
 /// Compiler.
 ///
 pub struct Compiler {
-    opts: Vec<Opt>,
+    context: Context
 }
 
 impl Compiler {
-    pub fn new(opts: Vec<Opt>) -> Compiler {
+    pub fn new(context: Context) -> Compiler {
         Compiler {
-            opts
+            context
         }
     }
 
@@ -98,4 +100,33 @@ fn put_token_stream(token_stream: &mut TokenStream, str_buf: &mut Vec<char>) {
         token_stream.put(Token::parse_token(&str));
         str_buf.clear();
     }
+}
+
+/// Compile context
+///   Provides a context which enables the compiler to obtain miscellaneous environment info.
+///
+/// 编译上下文
+///   提供编译器一个可以获得各种环境信息的上下文环境
+pub struct Context {
+    opts: HashMap<String, Vec<String>>
+}
+
+impl Context {
+
+    fn new() -> Context {
+        Context {
+            opts: HashMap::new(),
+        }
+    }
+
+    pub fn from_opts(opts: Vec<Opt>) -> Context {
+        let mut context = Context::new();
+        opts.iter().for_each( |opt| {
+            context.opts.insert(opt.get_name().clone(), opt.get_params().clone());
+        });
+        std::mem::drop(opts);
+        println!("{:?}", context.opts);
+        context
+    }
+
 }

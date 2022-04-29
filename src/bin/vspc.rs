@@ -1,7 +1,6 @@
 use vsp::cli::cmd::{do_print_version_and_exit, obtain_args};
 use vsp::cli::opts::Opt;
-use vsp::cli::option::*;
-use vsp::compile::compile::Compiler;
+use vsp::compile::compile::{Compiler, Context};
 use vsp::std::gen::Res;
 
 const CMD: &str = "vspc";
@@ -16,7 +15,9 @@ fn main() -> Res<()> {
 
 fn exec_command(opts: Vec<Opt>) {
 
-    let compiler = Compiler::new(opts);
+    let context = Context::from_opts(opts);
+    let compiler = Compiler::new(context);
+    compiler.compile("vsp/test.vsp");
 
     // if opts.verbose {
     //     println!("Verbose mode is on.");
@@ -37,8 +38,8 @@ fn do_print_help_and_exit() {
     println!(
 //==============================================================================
 "\
-{} [ [options] ... ] <source>
-where options may one or any of:
+{} [ [options [ params ... ] ] ... ]
+where options may any of:
   --feature
   --help        Print help message.
   --profile     Activate the specified profile to enable those APIs.

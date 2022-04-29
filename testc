@@ -1,6 +1,7 @@
 #!/usr/bin/env bash
 
 # Just for dev
+RUSTFLAGS="$RUSTFLAGS -A dead_code" \
 cargo run \
   --quiet \
   --package vsp \
