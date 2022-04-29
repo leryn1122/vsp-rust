@@ -3,17 +3,19 @@ use vsp::cli::opts::Opt;
 use vsp::compile::compile::{Compiler, Context};
 use vsp::std::gen::Res;
 
-const CMD: &str = "vspc";
+pub const CMD: &str = "vspc";
 
 /// Entrypoint of vsp compiler
 fn main() -> Res<()> {
     let args = obtain_args();
+    fast_return(args.1.clone());
+
     let mut opts = Opt::from_args(args.0, args.1);
-    exec_command(opts);
+    execute(opts);
     Ok(())
 }
 
-fn exec_command(opts: Vec<Opt>) {
+fn execute(opts: Vec<Opt>) {
 
     let context = Context::from_opts(opts);
     let compiler = Compiler::new(context);
@@ -34,16 +36,29 @@ fn exec_command(opts: Vec<Opt>) {
     // compile::compile_source(opts.get_source());
 }
 
+/// Fast return if opt below was met
+/// - <code>--version</code>
+/// - <code>--help</code>
+fn fast_return(args: Vec<String>) {
+    if args.contains(&"--help".to_string()) {
+        do_print_help_and_exit();
+    }
+    if args.contains(&"--version".to_string()) {
+        do_print_version_and_exit(CMD);
+    }
+}
+
 fn do_print_help_and_exit() {
     println!(
 //==============================================================================
 "\
-{} [ [options [ params ... ] ] ... ]
-where options may any of:
-  --feature
-  --help        Print help message.
-  --profile     Activate the specified profile to enable those APIs.
-  --version     Print version info.
+{} <source> [ options [ params ... ] ... ]
+
+  where options may any of:
+    --feature
+    --help        Print help message.
+    --profile     Activate the specified profile to enable those APIs.
+    --version     Print version info.
 ",
 //==============================================================================
         CMD,

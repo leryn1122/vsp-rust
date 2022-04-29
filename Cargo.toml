@@ -9,6 +9,10 @@ readme = "README.md"
 keywords = ["compiler"]
 license = "MIT"
 
+#[lib]
+#name = "vsp"
+#crate-type = ["cdylib"]
+
 [dependencies]
 hashbrown = "0.12"
 regex = "1.5"

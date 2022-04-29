@@ -335,4 +335,4 @@ $RECYCLE.BIN/
 !Cargo.lock
 
 **.rs~
-./release
+release

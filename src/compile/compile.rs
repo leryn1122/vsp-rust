@@ -1,5 +1,6 @@
 use std::fs::File;
 use hashbrown::HashMap;
+use crate::cli;
 
 use crate::cli::opts::Opt;
 use crate::std::gen::Res;
@@ -7,6 +8,8 @@ use crate::std::gen::Res;
 use super::buffer::Buffer;
 use super::lexer::LexerPattern;
 use super::token::{Token, TokenStream};
+
+pub const CMD: &str = "vspc";
 
 ///
 /// Compiler.
@@ -125,8 +128,13 @@ impl Context {
             context.opts.insert(opt.get_name().clone(), opt.get_params().clone());
         });
         std::mem::drop(opts);
-        println!("{:?}", context.opts);
+
+        if context.opts.get("verbose").is_some() {
+            println!("Verbose mode is on!!");
+        }
         context
     }
 
 }
+
+

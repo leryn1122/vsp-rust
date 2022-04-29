@@ -1,20 +1,11 @@
 pub enum Primitive {
-    Int {
-      value: i64
-    },
-    Float {
-      value: f64
-    },
     Bool,
+    Char,
+    Float,
+    Int,
+    Ref,
 }
 
 impl DataType for Primitive {
-
-  fn stringify(&self) -> String {
-    match self {
-      Int:
-    }
-  }
-
 
 }
