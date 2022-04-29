@@ -1,52 +1,51 @@
-use std::env;
-
+use vsp::cli::cmd::{do_print_version_and_exit, obtain_args};
+use vsp::cli::opts::Opt;
 use vsp::cli::option::*;
-use vsp::cli::cmd::do_print_version_and_exit;
-use vsp::compile::compile;
+use vsp::compile::compile::Compiler;
 use vsp::std::gen::Res;
 
-///
+const CMD: &str = "vspc";
+
 /// Entrypoint of vsp compiler
-///
 fn main() -> Res<()> {
-    let argv : Vec<String> = env::args().collect();
-    let argc: usize = argv.len();
-
-    let opts: Opts = parse_config(argc, argv);
+    let args = obtain_args();
+    let mut opts = Opt::from_args(args.0, args.1);
     exec_command(opts);
-
     Ok(())
 }
 
-fn exec_command(opts: Opts) {
+fn exec_command(opts: Vec<Opt>) {
 
-    if opts.verbose {
-        println!("Verbose mode is on.");
-    }
-    if opts.help {
-        do_print_help_and_exit();
-    }
-    if opts.version {
-        do_print_version_and_exit("vspc");
-    }
+    let compiler = Compiler::new(opts);
 
-    //eprintln!("source file = {}", opts.get_source());
-    //eprintln!("options = {:?}", opts);
-    compile::compile_source(opts.get_source());
+    // if opts.verbose {
+    //     println!("Verbose mode is on.");
+    // }
+    // if opts.help {
+    //     do_print_help_and_exit();
+    // }
+    // if opts.version {
+    //     do_print_version_and_exit( CMD);
+    // }
+    //
+    // //eprintln!("source file = {}", opts.get_source());
+    // //eprintln!("options = {:?}", opts);
+    // compile::compile_source(opts.get_source());
 }
 
 fn do_print_help_and_exit() {
     println!(
 //==============================================================================
 "\
-vspc [ options ... ] <source>
-    --help        Print help info.
-    --version     Print version info.
-
-Repo: {}
+{} [ [options] ... ] <source>
+where options may one or any of:
+  --feature
+  --help        Print help message.
+  --profile     Activate the specified profile to enable those APIs.
+  --version     Print version info.
 ",
 //==============================================================================
-        option_env!("CARGO_PKG_REPOSITORY").unwrap()
+        CMD,
     );
     std::process::exit(0);
 }

@@ -1,5 +1,11 @@
 use std::option_env;
 
+pub fn obtain_args() -> (usize, Vec<String>){
+    let argv: Vec<String> = std::env::args().collect();
+    let argc: usize = argv.len();
+    (argc, argv)
+}
+
 pub fn do_print_version_and_exit(cmd: &str) {
     println!(
 //==============================================================================

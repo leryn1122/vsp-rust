@@ -3,6 +3,7 @@ use regex::Regex;
 
 extern crate strum;
 extern crate strum_macros;
+
 use strum_macros::EnumIter;
 use strum::IntoEnumIterator;
 use crate::compile::token::Token::Reserve;
@@ -20,7 +21,7 @@ pub enum Token {
 
 impl Token {
 
-    pub fn get_token(lexeme: &str) -> Token {
+    pub fn parse_token(lexeme: &str) -> Token {
         let opt: Option<ReservedWord> = ReservedWord::from_str(lexeme);
         if opt.is_some() {
            return Reserve(opt.unwrap());
@@ -244,11 +245,18 @@ impl Debug for MarkToken {
 ///
 /// Token stream
 ///
+#[derive(Debug)]
 pub struct TokenStream {
     token: Vec<Token>,
 }
 
 impl TokenStream {
+
+    pub fn new() -> TokenStream {
+        TokenStream {
+            token: Vec::new()
+        }
+    }
 
     pub fn put(&mut self, token: Token) {
         &self.token.push(token);
