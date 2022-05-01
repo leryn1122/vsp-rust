@@ -1,0 +1,4 @@
+target/release/*.lib,release/lib
+target/release/*.rlib,release/lib
+conf,release/
+LICENSE,release/

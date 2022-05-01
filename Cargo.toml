@@ -11,7 +11,11 @@ license = "MIT"
 
 #[lib]
 #name = "vspc"
-#crate-type = ["cdylib"]
+#crate-type = ["dylib"]
+
+[profile.release]
+lto=true
+opt-level='z'
 
 [dependencies]
 hashbrown = "0.12"
