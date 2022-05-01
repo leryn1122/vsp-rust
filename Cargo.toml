@@ -1,6 +1,6 @@
 [package]
 name = "vsp"
-version = "0.1.0"
+version = "0.0.1"
 authors = ["Leryn"]
 edition = "2018"
 description = "A toy language compiler"
@@ -10,7 +10,7 @@ keywords = ["compiler"]
 license = "MIT"
 
 #[lib]
-#name = "vsp"
+#name = "vspc"
 #crate-type = ["cdylib"]
 
 [dependencies]

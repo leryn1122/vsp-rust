@@ -1,13 +1,7 @@
-use vsp::cli::cmd::{
-    do_print_version_and_exit,
-    fast_return,
-    obtain_args
-};
 use vsp::cli::opts::Opt;
-use vsp::compile::compile::{Compiler, Context};
 use vsp::std::gen::Res;
 
-pub const CMD: &str = "vspc";
+pub const CMD: &str = "vspx";
 
 fn do_print_help_and_exit() {
     println!(
@@ -27,21 +21,10 @@ fn do_print_help_and_exit() {
     std::process::exit(0);
 }
 
-/// Entrypoint of vsp compiler
+/// Entrypoint of vsp tool for compression and extraction.
 ///
-/// vsp 编译器的端点
+/// vsp 压缩和解压工具
 fn main() -> Res<()> {
-    let args = obtain_args();
-    fast_return(args.1.clone(), CMD, do_print_help_and_exit);
-
-    let mut opts = Opt::from_args(args.0, args.1);
-    execute(opts);
+    do_print_help_and_exit();
     Ok(())
-}
-
-fn execute(opts: Vec<Opt>) {
-
-    let context = Context::from_opts(opts);
-    let compiler = Compiler::new(context);
-    compiler.compile("vsp/test.vsp");
 }

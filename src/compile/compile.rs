@@ -1,7 +1,7 @@
 use std::fs::File;
 use hashbrown::HashMap;
-use crate::cli;
 
+use crate::cli;
 use crate::cli::opts::Opt;
 use crate::std::gen::Res;
 
@@ -19,6 +19,7 @@ pub struct Compiler {
 }
 
 impl Compiler {
+
     pub fn new(context: Context) -> Compiler {
         Compiler {
             context
@@ -132,6 +133,7 @@ impl Context {
         if context.opts.get("verbose").is_some() {
             println!("Verbose mode is on!!");
         }
+
         context
     }
 

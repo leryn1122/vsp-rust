@@ -9,10 +9,12 @@ echo ""
 echo "Release path: $PWD"
 echo ""
 
+cargo build --release
+
 find . -maxdepth 1 -type d -name "release" -exec rm -rf {} \;
 mkdir -p release/{bin,conf,include,lib}
 
-cp -ar target/release/vspc          release/bin
+find target/release -maxdepth 1 -type f -perm -750 -exec cp -ar {} release/bin \;
 cp -ar target/release/*.rlib        release/lib
 cp -ar conf                         release/
 cp -ar LICENSE                      release/
