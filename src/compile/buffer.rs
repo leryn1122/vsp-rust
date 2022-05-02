@@ -4,7 +4,6 @@ const BUFFER_SIZE: usize = 8;
 // const BUFFER_SIZE: i8 = 2;
 
 /// Buffer, composed of by two char buffer array.
-#[warn(dead_code)]
 pub struct Buffer {
     buffer_r: [u8; 1 << BUFFER_SIZE],
     buffer_l: [u8; 1 << BUFFER_SIZE],

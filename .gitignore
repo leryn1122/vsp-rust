@@ -336,3 +336,6 @@ $RECYCLE.BIN/
 
 **.rs~
 release
+
+**.gz
+**.zip

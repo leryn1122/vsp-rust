@@ -1,9 +1,12 @@
 use std::fs::File;
+
 use hashbrown::HashMap;
 
 use crate::cli;
 use crate::cli::opts::Opt;
+use crate::fs::file::{SourceFile};
 use crate::std::gen::Res;
+use crate::std::substring::Substring;
 
 use super::buffer::Buffer;
 use super::lexer::LexerPattern;
@@ -11,9 +14,7 @@ use super::token::{Token, TokenStream};
 
 pub const CMD: &str = "vspc";
 
-///
 /// Compiler.
-///
 pub struct Compiler {
     context: Context
 }
@@ -26,9 +27,25 @@ impl Compiler {
         }
     }
 
-    pub fn compile(&self, src: &str) {
-        let mut file = File::open(src).unwrap();
+    pub fn compile(&self) {
 
+        // let mut f_src = SourceFile::from_path(&self.context.source);
+        // match f_src {
+        //     SourceFile::Dir(d) => {
+        //         println!("dir = {}", d);
+        //         todo!("dir");
+        //     },
+        //     SourceFile::TextFile(f) => {
+        //         println!("file = {}", f);
+        //         todo!("file");
+        //     },
+        //     SourceFile::Zip => {
+        //         todo!("zip");
+        //     }
+        // }
+
+
+        let mut file = File::open(&self.context.source).unwrap();
         let mut buffer: Buffer = Buffer::new();
 
         let mut offset: usize;
@@ -100,7 +117,6 @@ impl Compiler {
 fn put_token_stream(token_stream: &mut TokenStream, str_buf: &mut Vec<char>) {
     if str_buf.len() > 0 {
         let mut str = str_buf.iter().collect::<String>();
-        // println!("lexeme  = {}", str);
         token_stream.put(Token::parse_token(&str));
         str_buf.clear();
     }
@@ -112,29 +128,38 @@ fn put_token_stream(token_stream: &mut TokenStream, str_buf: &mut Vec<char>) {
 /// 编译上下文
 ///   提供编译器一个可以获得各种环境信息的上下文环境
 pub struct Context {
-    opts: HashMap<String, Vec<String>>
+    source: String,
+    opts: HashMap<String, Vec<String>>,
 }
 
 impl Context {
 
-    fn new() -> Context {
+    fn init(source: String, opts: HashMap<String, Vec<String>>) -> Context {
         Context {
-            opts: HashMap::new(),
+            source,
+            opts,
         }
     }
 
-    pub fn from_opts(opts: Vec<Opt>) -> Context {
-        let mut context = Context::new();
-        opts.iter().for_each( |opt| {
-            context.opts.insert(opt.get_name().clone(), opt.get_params().clone());
-        });
-        std::mem::drop(opts);
-
-        if context.opts.get("verbose").is_some() {
-            println!("Verbose mode is on!!");
+    pub fn from_args(argc: usize, argv: Vec<String>) -> Context {
+        let mut opts = HashMap::new();
+        let mut opt: String = String::from("");
+        let mut params: Vec<String> = Vec::new();
+        for _i in 2 .. argc {
+            let segment = argv[_i].to_string();
+            if segment.starts_with("--") {
+                if opt.len() > 0 {
+                    opts.insert(opt, params.clone());
+                    params = Vec::new();
+                }
+                opt = segment.substring(2, segment.len()).to_string();
+            } else {
+                params.push(segment);
+            }
         }
+        opts.insert(opt, params.clone());
 
-        context
+        Context::init(argv[1].clone(), opts)
     }
 
 }

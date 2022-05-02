@@ -33,11 +33,14 @@ pub fn do_print_version_and_exit(cmd: &str) {
 ///   - args
 ///   - command name
 ///   - function to print help info.
-pub fn fast_return(args: Vec<String>, cmd: &str, help_hook: fn() -> ()) {
-    if args.contains(&"--help".to_string()) {
+pub fn fast_return(argv: Vec<String>, cmd: &str, help_hook: fn() -> ()) {
+    if argv.len() < 2 {
         help_hook();
     }
-    if args.contains(&"--version".to_string()) {
+    if argv.contains(&"--help".to_string()) {
+        help_hook();
+    }
+    if argv.contains(&"--version".to_string()) {
         do_print_version_and_exit(cmd);
     }
 }

@@ -1,5 +1,3 @@
-use substring::Substring;
-
 /// Wrapper of cli options and parameters
 ///
 /// ```bash
@@ -29,25 +27,6 @@ impl Opt {
             name: name.to_string(),
             params: Vec::new(),
         }
-    }
-
-    /// Rolling on the cli args to generate a queue of Opt
-    pub fn from_args(argc: usize, argv: Vec<String>) -> Vec<Opt> {
-        let mut opts: Vec<Opt> = Vec::new();
-        for i in 1 .. argc {
-            let segment = argv.get(i).unwrap();
-            if segment.starts_with("--") {
-                opts.push(
-                    Opt::by_name(
-                        segment.substring(2, segment.len()))
-                );
-            } else {
-                // Always ok here. Fetch last Opt in the queue and fulfill params.
-                let mut opt = opts.last_mut().unwrap();
-                opt.params.push(segment.to_string());
-            }
-        }
-        return opts
     }
 
     pub fn get_name(&self) -> &String {

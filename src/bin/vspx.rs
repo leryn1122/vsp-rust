@@ -1,5 +1,7 @@
-use vsp::cli::opts::Opt;
-use vsp::std::gen::Res;
+use vsp::cli::cmd::{
+    fast_return,
+    obtain_args
+};
 
 pub const CMD: &str = "vspx";
 
@@ -24,7 +26,7 @@ fn do_print_help_and_exit() {
 /// Entrypoint of vsp tool for compression and extraction.
 ///
 /// vsp 压缩和解压工具
-fn main() -> Res<()> {
-    do_print_help_and_exit();
-    Ok(())
+fn main() {
+    let args = obtain_args();
+    fast_return(args.1.clone(), CMD, do_print_help_and_exit);
 }

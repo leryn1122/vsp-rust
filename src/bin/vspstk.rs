@@ -1,4 +1,7 @@
-use vsp::std::gen::Res;
+use vsp::cli::cmd::{
+    fast_return,
+    obtain_args
+};
 
 pub const CMD: &str = "vspstk";
 
@@ -23,7 +26,7 @@ fn do_print_help_and_exit() {
 /// Entrypoint of vsp stack tracer.
 ///
 /// vsp 堆栈追踪跟踪器的端点
-fn main() -> Res<()> {
-    do_print_help_and_exit();
-    Ok(())
+fn main() {
+    let args = obtain_args();
+    fast_return(args.1.clone(), CMD, do_print_help_and_exit);
 }
