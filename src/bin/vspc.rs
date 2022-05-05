@@ -1,19 +1,21 @@
+#![allow(dead_code, unused_imports)]
+
 use vsp::cli::cmd::{
     fast_return,
     obtain_args
 };
 use vsp::compile::compile::{Compiler, Context};
 
-pub const CMD: &str = "vspc";
+pub const CMD: &'static str = "vspc";
 
 fn do_print_help_and_exit() {
     println!(
 //==============================================================================
 "\
-{} <source> [ options [ params ... ] ... ]
+{} <source> [ options [ params ... ] | options[=params,...] | ... ]
 
   where options may any of:
-    --feature
+    --feature     Enable specified feature.
     --help        Print help message.
     --profile     Activate the specified profile to enable those APIs.
     --version     Print version info.

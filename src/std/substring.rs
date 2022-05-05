@@ -2,6 +2,7 @@ pub trait Substring {
     fn substring(&self, start_index: usize, end_index: usize) -> &str;
 }
 
+#[allow(deprecated)]
 impl Substring for str {
     fn substring(&self, start_index: usize, end_index: usize) -> &str {
         if end_index <= start_index {

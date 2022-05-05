@@ -1,3 +1,5 @@
+#![allow(dead_code, unused_imports)]
+
 extern crate core;
 
 pub mod cli;

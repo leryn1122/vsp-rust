@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
-export RUSTFLAGS=-Awarnings
-export RUST_LOG=trace
+#export RUSTFLAGS=-Awarnings
+#export RUST_LOG=trace
 
 # Just for dev
 cargo run \

@@ -16,8 +16,7 @@ pub fn do_print_version_and_exit(cmd: &str) {
     println!(
 //==============================================================================
 "\
-{} version {} (early access)
-",
+{} version {} (early access)",
 //==============================================================================
         cmd,
         std::option_env!("CARGO_PKG_VERSION").unwrap(),

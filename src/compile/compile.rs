@@ -12,7 +12,7 @@ use super::buffer::Buffer;
 use super::lexer::LexerPattern;
 use super::token::{Token, TokenStream};
 
-pub const CMD: &str = "vspc";
+pub const CMD: &'static str = "vspc";
 
 /// Compiler.
 pub struct Compiler {
@@ -117,7 +117,8 @@ impl Compiler {
 fn put_token_stream(token_stream: &mut TokenStream, str_buf: &mut Vec<char>) {
     if str_buf.len() > 0 {
         let mut str = str_buf.iter().collect::<String>();
-        token_stream.put(Token::parse_token(&str));
+        println!("{}", str);
+        token_stream.put(Token::parse_token(&str).unwrap());
         str_buf.clear();
     }
 }
@@ -152,12 +153,20 @@ impl Context {
                     opts.insert(opt, params.clone());
                     params = Vec::new();
                 }
-                opt = segment.substring(2, segment.len()).to_string();
+                let j = segment.find('=');
+                opt = segment.substring(2, j.unwrap_or(segment.len())).to_string();
+                if j.is_some() {
+                    segment.substring(j.unwrap() + 1, segment.len()).split(',')
+                        .for_each(| s | {
+                            params.push(s.to_string())
+                        })
+                }
             } else {
                 params.push(segment);
             }
         }
         opts.insert(opt, params.clone());
+        println!("{:?}",opts);
 
         Context::init(argv[1].clone(), opts)
     }

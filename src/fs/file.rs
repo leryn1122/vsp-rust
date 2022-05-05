@@ -1,4 +1,5 @@
 use std::fs::File;
+use std::io;
 use std::io::{BufRead, BufReader, Read};
 use std::path::Path;
 
@@ -6,6 +7,16 @@ use zip::read::ZipFile;
 use zip::ZipArchive;
 
 use crate::fs::file::SourceFile::{Dir, TextFile, Zip};
+
+#[cfg(unix)]
+pub const FILE_SEP: &str = "/";
+#[cfg(unix)]
+pub const PATH_SEP: &str = ":";
+
+#[cfg(windows)]
+pub const FILE_SEP: &str = "\\";
+#[cfg(windows)]
+pub const PATH_SEP: &str = ";";
 
 pub type ZipRef = ZipArchive<File>;
 
@@ -39,5 +50,36 @@ impl SourceFile {
     pub fn read(&self) {
     }
 
+}
+
+struct SourceFileManager {
+    path: Vec<SourceFile>
+}
+
+impl SourceFileManager {
+
+    fn new() -> Self {
+        Self {
+            path: vec![],
+        }
+    }
+
+    #[allow(unused_variables)]
+    pub fn add_source_file(&mut self, path: &str) -> Result<(), std::io::Error> {
+        Ok(())
+    }
+
+    pub fn add_source_files(&mut self, paths: &str) {
+        paths.split(PATH_SEP).for_each(
+            | path | match self.add_source_file(path) {
+                Err(e) => eprintln!("{}", e),
+                _ => (),
+            }
+        );
+    }
+
+    pub fn size(&self) -> usize {
+        self.path.len()
+    }
 }
 
