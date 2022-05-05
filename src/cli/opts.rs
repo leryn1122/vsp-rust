@@ -13,27 +13,22 @@
 /// }
 /// ```
 ///
+#[deprecated]
 #[derive(Debug)]
 pub struct Opt {
-    name: String,
-    params: Vec<String>,
+    pub name: String,
+    pub params: Vec<String>,
 }
 
+#[allow(deprecated)]
+#[deprecated]
 impl Opt {
 
     /// Generate an empty opt by its name.
-    pub fn by_name(name: &str) -> Opt {
+    pub fn by_name(name: &str) -> Self {
         Opt {
             name: name.to_string(),
             params: Vec::new(),
         }
-    }
-
-    pub fn get_name(&self) -> &String {
-        &self.name
-    }
-
-    pub fn get_params(&self) -> &Vec<String> {
-        &self.params
     }
 }

@@ -1,10 +1,14 @@
-#![allow(dead_code, unused_imports)]
+#![allow(dead_code)]
 
+use vsp::cli;
 use vsp::cli::cmd::{
+    Args,
     fast_return,
     obtain_args
 };
 use vsp::compile::compile::{Compiler, Context};
+
+extern crate lazy_static;
 
 pub const CMD: &'static str = "vspc";
 
@@ -12,7 +16,7 @@ fn do_print_help_and_exit() {
     println!(
 //==============================================================================
 "\
-{} <source> [ options [ params ... ] | options[=params,...] | ... ]
+{} <source> [ [ --options [ params ... ] | --options[=params,...] ] ... ]
 
   where options may any of:
     --feature     Enable specified feature.
@@ -32,11 +36,12 @@ fn do_print_help_and_exit() {
 fn main() {
     let args = obtain_args();
     fast_return(args.1.clone(), CMD, do_print_help_and_exit);
-    execute(args.0, args.1);
+    cli::init::init();
+    execute(args);
 }
 
-fn execute(argc: usize, argv: Vec<String>) {
-    let context = Context::from_args(argc, argv);
+fn execute(args: Args) {
+    let context = Context::from_args(args);
     let compiler = Compiler::new(context);
     compiler.compile();
 }

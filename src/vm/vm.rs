@@ -3,7 +3,7 @@ pub struct VM {
 }
 
 impl VM {
-    pub fn new(constant_pool: ConstantPool) -> self {
+    pub fn new(constant_pool: ConstantPool) -> Self {
         VM { constant_pool }
     }
 }

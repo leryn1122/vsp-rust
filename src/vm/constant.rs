@@ -8,9 +8,9 @@ pub struct ConstantPool {
 const CONST_POOL_INIT_CAPACITY: u16 = 8;
 
 impl ConstantPool {
-    pub fn new() -> ConstantPool {
+    pub fn new() -> Self {
         ConstantPool {
-            int: Vec::with_capacity(8),
+            integers: Vec::with_capacity(8),
         }
     }
 }

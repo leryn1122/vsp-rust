@@ -3,9 +3,7 @@ use regex::Regex;
 
 extern crate strum;
 extern crate strum_macros;
-
 use strum_macros::EnumIter;
-use strum::IntoEnumIterator;
 
 #[derive(Debug,PartialEq)]
 pub enum Token {
@@ -21,17 +19,17 @@ pub enum Token {
 impl Token {
 
     pub fn parse_token(lexeme: &str) -> Result<Token, std::io::Error> {
-        let mut opt: Option<ReservedWord> = ReservedWord::from_str(lexeme);
+        let opt: Option<ReservedWord> = ReservedWord::from_str(lexeme);
         if opt.is_some() {
            return Ok(Token::Reserve(opt.unwrap()));
         }
 
-        let IDENTIFIER_REGEX: Regex = Regex::new(r#"[\w][\w\d_]*"#).unwrap();
-        if IDENTIFIER_REGEX.is_match(lexeme) {
+        let identifier_regex: Regex = Regex::new(r#"[\w][\w\d_]*"#).unwrap();
+        if identifier_regex.is_match(lexeme) {
             return Ok(Token::Identifier(String::from(lexeme)));
         }
 
-        let mut opt: Option<PunctuationToken> = PunctuationToken::from_str(lexeme);
+        let opt: Option<PunctuationToken> = PunctuationToken::from_str(lexeme);
         if opt.is_some() {
             return Ok(Token::Punctuation(opt.unwrap()));
         }
@@ -304,6 +302,7 @@ impl TokenStream {
         }
     }
 
+    #[allow(unused_must_use)]
     pub fn put(&mut self, token: Token) {
         &self.token.push(token);
     }

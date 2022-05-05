@@ -1,3 +1,4 @@
+use std::fmt::{Display, Formatter, Write};
 use std::io::Read;
 
 const BUFFER_SIZE: usize = 8;
@@ -13,7 +14,7 @@ pub struct Buffer {
 }
 
 impl Buffer {
-    pub fn new() -> Buffer {
+    pub fn new() -> Self {
         Buffer {
             buffer_r: [0u8; 1 << BUFFER_SIZE],
             buffer_l: [0u8; 1 << BUFFER_SIZE],
@@ -24,7 +25,7 @@ impl Buffer {
     }
 
     #[warn(unused_variables)]
-    pub fn with_capacity(_capacity: usize) -> Buffer {
+    pub fn with_capacity(_capacity: usize) -> Self {
         // TODO
         Buffer::new()
     }
@@ -71,5 +72,11 @@ impl Buffer {
         let offset: usize = readable.read(self.get()).unwrap();
         self.pos = offset;
         Ok(offset)
+    }
+}
+
+impl Display for Buffer {
+    fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
+        f.write_str("1234")
     }
 }

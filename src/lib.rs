@@ -1,6 +1,4 @@
-#![allow(dead_code, unused_imports)]
-
-extern crate core;
+#![allow(dead_code)]
 
 pub mod cli;
 pub mod compile;
