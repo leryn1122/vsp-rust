@@ -1,5 +1,4 @@
 use std::fs::File;
-use zip::read::ZipFile;
 use zip::ZipArchive;
 
 #[cfg(unix)]

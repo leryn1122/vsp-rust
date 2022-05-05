@@ -585,6 +585,7 @@ dependencies = [
  "env_logger",
  "hashbrown",
  "lazy_static",
+ "libc",
  "log",
  "regex",
  "stderrlog",

@@ -41,7 +41,7 @@ fn main() {
 }
 
 fn execute(args: Args) {
-    let context = Context::from_args(args);
+    let context = Context::from_args(args, do_print_help_and_exit);
     let compiler = Compiler::new(context);
     compiler.compile();
 }

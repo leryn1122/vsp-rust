@@ -1,10 +1,11 @@
-use std::fmt::{Display, Formatter, Write};
+use std::fmt::{Display, Formatter};
 use std::io::Read;
 
 const BUFFER_SIZE: usize = 8;
 // const BUFFER_SIZE: i8 = 2;
 
 /// Buffer, composed of by two char buffer array.
+#[derive(Debug)]
 pub struct Buffer {
     buffer_r: [u8; 1 << BUFFER_SIZE],
     buffer_l: [u8; 1 << BUFFER_SIZE],

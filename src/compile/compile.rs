@@ -46,20 +46,22 @@ impl Compiler {
 pub struct Context {
     source: String,
     opts: HashMap<String, Vec<String>>,
+    help_hook: fn(),
 }
 
 impl Context {
 
-    fn init(source: String, opts: HashMap<String, Vec<String>>) -> Self {
+    fn init(source: String, opts: HashMap<String, Vec<String>>, help_hook: fn()) -> Self {
         Context {
             source,
             opts,
+            help_hook
         }
     }
 
     /// Create a compile context from cli args.
-    pub fn from_args(args: Args) -> Self {
-        Context::init(args.1[1].clone(), cmd::parse_opts(args))
+    pub fn from_args(args: Args, help_hook: fn()->()) -> Self {
+        Context::init(args.1[1].clone(), cmd::parse_opts(args), help_hook)
     }
 
 }
