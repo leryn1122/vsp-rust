@@ -7,10 +7,16 @@ pub struct VirtualMachine {
 }
 
 impl VirtualMachine {
+
     pub fn new() -> Self {
         VirtualMachine {
             constant_pool: ConstantPool::new(),
             static_table: StaticTable::new()
         }
+    }
+
+    /// Returns the PID.
+    pub fn start(&self) -> usize {
+        0
     }
 }

@@ -6,11 +6,10 @@ use vsp::cli::cmd::{
     fast_return,
     obtain_args
 };
-use vsp::fs::file::os_platform;
-use vsp::sys::sys;
 
 pub const CMD: &'static str = "vsps";
 
+/// Help info.
 fn do_print_help_and_exit() {
     println!(
 //==============================================================================
@@ -27,6 +26,7 @@ fn do_print_help_and_exit() {
     std::process::exit(0);
 }
 
+///
 /// Entrypoint of vsp process tool.
 ///
 /// The instinct is very simple inspired by JVM.
@@ -40,7 +40,6 @@ fn do_print_help_and_exit() {
 /// %SystemRoot%\TEMP\vsprefdata_root      (Windows)
 /// ```
 ///
-/// vsp 进程工具的端点
 fn main() {
     let args = obtain_args();
     fast_return(args.1.clone(), CMD, do_print_help_and_exit);
@@ -48,12 +47,7 @@ fn main() {
 }
 
 fn execute() {
-    let username = sys::get_current_user();
-    let dir : String = format!("{}{}{}{}",
-                               "/tmp/",
-                               os_platform::FILE_SEP,
-                               sys::PID_FILE_PREFIX,
-                               username);
+    let dir = vsp::vm::process::get_pid_file_path();
     let user_path = Path::new(&dir);
     for child_dir in read_dir(&user_path) {
         child_dir

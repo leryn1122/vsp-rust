@@ -2,9 +2,10 @@
 
 cd -P "$(dirname ${0-$BASHSOURCE})/.." || exit 1
 
-cargo build --release
+RUSTFLAGS='-C prefer-dynamic' \
+  cargo build --release
 mkdir -p release/{bin,conf,include,lib}
-find target/release/ -maxdepth 1 -type f -perm -750 -exec cp -ar {} release/bin \;
+find target/release/ -maxdepth 1 -type f -name vsp* -perm -750 -exec cp -ar {} release/bin \;
 awk -F ',' '{printf "cp -ar %s %s\n", $1, $2}' build/conf/list.csv
 
 [ `command -v upx` ] && \

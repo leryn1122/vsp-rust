@@ -1,2 +1,0 @@
-var i: int = 123;
-var str: String = "Hello world";

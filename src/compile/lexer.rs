@@ -21,7 +21,7 @@ pub struct Lexer {
     source: SourceFile,
     line: usize,
     buffer: Buffer,
-    token_stream: TokenStream,
+    pub token_stream: TokenStream,
 }
 
 impl Lexer {
@@ -51,7 +51,7 @@ impl Lexer {
         let mut token_stream = TokenStream::new();
 
         // TODO offset should have been replaced by len.
-        for i in 0 .. offset {
+        for i in 0 .. offset + 1 {
             let ch : char = buffer.char_at(i);
 
             match pattern {

@@ -34,6 +34,7 @@ impl Compiler {
 
         let mut lexer = Lexer::new(&self.context.source);
         lexer.read_as_token_stream();
+        lexer.token_stream;
 
     }
 }

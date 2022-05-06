@@ -9,15 +9,13 @@ readme = "README.md"
 keywords = ["compiler"]
 license = "MIT"
 
-#[lib]
-#name = "vspc"
-#crate-type = ["dylib"]
+[lib]
+name = "vsp"
+crate-type = ["rlib", "dylib"]
 
 [profile.release]
 codegen-units = 1
-lto = true
 opt-level = "z"
-panic = "abort"
 
 [dependencies]
 hashbrown = "^0.12.0"

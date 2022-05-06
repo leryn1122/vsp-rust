@@ -21,5 +21,9 @@ vspc <source> [ options [ params ... ] ... ]
 ```
 
 ```plaintext
-vspc vsp/test.vsp
+vspc test.vsp
+
+vspc test.vsp --verbose
+
+
 ```
