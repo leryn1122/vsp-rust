@@ -4,4 +4,3 @@
 
 pub mod cmd;
 pub mod init;
-pub mod opts;

@@ -1,43 +1,46 @@
 use std::fmt::{Debug, Display, Formatter};
+use lazy_static::lazy_static;
 use regex::Regex;
 
 extern crate strum;
 extern crate strum_macros;
 use strum_macros::EnumIter;
 
+lazy_static! {
+    static ref IDENTIFIER_REGEX: Regex = Regex::new(r#"^[A-Za-z][A-Za-z0-9_]*"#).unwrap();
+}
+
+
+pub fn parse_token(lexeme: &str) -> Result<Token, std::io::Error> {
+    let opt: Option<ReservedWord> = ReservedWord::from_str(lexeme);
+    if opt.is_some() {
+        return Ok(Token::Reserve(opt.unwrap()));
+    }
+
+
+    // log::trace!("lexeme = {}, result = {}", lexeme, identifier_regex.is_match(lexeme));
+    if IDENTIFIER_REGEX.is_match(lexeme) {
+        return Ok(Token::Identifier(String::from(lexeme)));
+    }
+
+    let opt: Option<Punctuation> = Punctuation::from_str(lexeme);
+    if opt.is_some() {
+        return Ok(Token::Punctuation(opt.unwrap()));
+    }
+
+    Ok(Token::Numeric(lexeme.to_string()))
+}
+
 #[derive(Debug,PartialEq)]
 pub enum Token {
     Identifier(String),
     Reserve(ReservedWord),
-    Punctuation(PunctuationToken),
-    Numeric,
+    Punctuation(Punctuation),
+    Numeric(String),
     Literal(String),
 }
 
 // const IDENTIFIER_REGEX: Regex = Regex::new(r#"[\w][\w\d_]*"#).unwrap();
-
-impl Token {
-
-    pub fn parse_token(lexeme: &str) -> Result<Token, std::io::Error> {
-        let opt: Option<ReservedWord> = ReservedWord::from_str(lexeme);
-        if opt.is_some() {
-           return Ok(Token::Reserve(opt.unwrap()));
-        }
-
-        let identifier_regex: Regex = Regex::new(r#"[\w][\w\d_]*"#).unwrap();
-        if identifier_regex.is_match(lexeme) {
-            return Ok(Token::Identifier(String::from(lexeme)));
-        }
-
-        let opt: Option<PunctuationToken> = PunctuationToken::from_str(lexeme);
-        if opt.is_some() {
-            return Ok(Token::Punctuation(opt.unwrap()));
-        }
-
-        Ok(Token::Numeric)
-    }
-
-}
 
 /// Reserved word
 #[derive(EnumIter, PartialEq)]
@@ -145,7 +148,7 @@ impl Debug for ReservedWord {
 /// Enumeration for mark / fixed token.
 ///
 #[derive(PartialEq)]
-pub enum PunctuationToken {
+pub enum Punctuation {
     // Statement
     /**   .   **/  Dot,
     /**   ,   **/  Comma,
@@ -197,90 +200,90 @@ pub enum PunctuationToken {
     /**   ::  **/  DColon,
 }
 
-impl PunctuationToken {
-    pub fn from_str(name: &str) -> Option<PunctuationToken> {
+impl Punctuation {
+    pub fn from_str(name: &str) -> Option<Punctuation> {
         return match name {
-            "."        => Some(PunctuationToken::Dot         ),
-            ","        => Some(PunctuationToken::Comma       ),
-            ";"        => Some(PunctuationToken::SemiColon   ),
-            ":"        => Some(PunctuationToken::Colon       ),
-            "+"        => Some(PunctuationToken::Plus        ),
-            "-"        => Some(PunctuationToken::Minus       ),
-            "*"        => Some(PunctuationToken::Asterisk    ),
-            "/"        => Some(PunctuationToken::Slash       ),
-            "%"        => Some(PunctuationToken::Percentage  ),
-            "("        => Some(PunctuationToken::LParenthesis),
-            ")"        => Some(PunctuationToken::RParenthesis),
-            "["        => Some(PunctuationToken::LBracket    ),
-            "]"        => Some(PunctuationToken::RBracket    ),
-            "{"        => Some(PunctuationToken::LBrace      ),
-            "}"        => Some(PunctuationToken::RBrace      ),
-            "<"        => Some(PunctuationToken::Less        ),
-            ">"        => Some(PunctuationToken::Greater     ),
-            "<="       => Some(PunctuationToken::LessEqual   ),
-            ">="       => Some(PunctuationToken::GreaterEqual),
-            "=="       => Some(PunctuationToken::Equal       ),
-            "!="       => Some(PunctuationToken::NotEqual    ),
-            "="        => Some(PunctuationToken::Assigment   ),
-            "!"        => Some(PunctuationToken::Not         ),
-            "&&"       => Some(PunctuationToken::And         ),
-            "||"       => Some(PunctuationToken::Or          ),
-            "^"        => Some(PunctuationToken::Xor         ),
-            "?"        => Some(PunctuationToken::Question    ),
-            "'"        => Some(PunctuationToken::SQuote      ),
-            "\""       => Some(PunctuationToken::DQuote      ),
-            "\"\"\""   => Some(PunctuationToken::TQuote      ),
-            "->"       => Some(PunctuationToken::Arrow       ),
-            "=>"       => Some(PunctuationToken::DArrow      ),
-            "::"       => Some(PunctuationToken::DColon      ),
+            "."        => Some(Punctuation::Dot         ),
+            ","        => Some(Punctuation::Comma       ),
+            ";"        => Some(Punctuation::SemiColon   ),
+            ":"        => Some(Punctuation::Colon       ),
+            "+"        => Some(Punctuation::Plus        ),
+            "-"        => Some(Punctuation::Minus       ),
+            "*"        => Some(Punctuation::Asterisk    ),
+            "/"        => Some(Punctuation::Slash       ),
+            "%"        => Some(Punctuation::Percentage  ),
+            "("        => Some(Punctuation::LParenthesis),
+            ")"        => Some(Punctuation::RParenthesis),
+            "["        => Some(Punctuation::LBracket    ),
+            "]"        => Some(Punctuation::RBracket    ),
+            "{"        => Some(Punctuation::LBrace      ),
+            "}"        => Some(Punctuation::RBrace      ),
+            "<"        => Some(Punctuation::Less        ),
+            ">"        => Some(Punctuation::Greater     ),
+            "<="       => Some(Punctuation::LessEqual   ),
+            ">="       => Some(Punctuation::GreaterEqual),
+            "=="       => Some(Punctuation::Equal       ),
+            "!="       => Some(Punctuation::NotEqual    ),
+            "="        => Some(Punctuation::Assigment   ),
+            "!"        => Some(Punctuation::Not         ),
+            "&&"       => Some(Punctuation::And         ),
+            "||"       => Some(Punctuation::Or          ),
+            "^"        => Some(Punctuation::Xor         ),
+            "?"        => Some(Punctuation::Question    ),
+            "'"        => Some(Punctuation::SQuote      ),
+            "\""       => Some(Punctuation::DQuote      ),
+            "\"\"\""   => Some(Punctuation::TQuote      ),
+            "->"       => Some(Punctuation::Arrow       ),
+            "=>"       => Some(Punctuation::DArrow      ),
+            "::"       => Some(Punctuation::DColon      ),
             _ => None,
         }
     }
 }
 
-impl Display for PunctuationToken {
+impl Display for Punctuation {
     fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
         write!(f, "{:?}", self)
     }
 }
 
-impl Debug for PunctuationToken {
+impl Debug for Punctuation {
     fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
         write!(f, "{}",
                match self {
-                   PunctuationToken::Dot              =>      ".",
-                   PunctuationToken::Comma            =>      ",",
-                   PunctuationToken::SemiColon        =>      ";",
-                   PunctuationToken::Colon            =>      ":",
-                   PunctuationToken::Plus             =>      "+",
-                   PunctuationToken::Minus            =>      "-",
-                   PunctuationToken::Asterisk         =>      "*",
-                   PunctuationToken::Slash            =>      "/",
-                   PunctuationToken::Percentage       =>      "%",
-                   PunctuationToken::LParenthesis     =>      "(",
-                   PunctuationToken::RParenthesis     =>      ")",
-                   PunctuationToken::LBracket         =>      "[",
-                   PunctuationToken::RBracket         =>      "]",
-                   PunctuationToken::LBrace           =>      "{",
-                   PunctuationToken::RBrace           =>      "}",
-                   PunctuationToken::Less             =>      "<",
-                   PunctuationToken::Greater          =>      ">",
-                   PunctuationToken::LessEqual        =>      "<=",
-                   PunctuationToken::GreaterEqual     =>      ">=",
-                   PunctuationToken::Equal            =>      "==",
-                   PunctuationToken::NotEqual         =>      "!=",
-                   PunctuationToken::Assigment        =>      "=",
-                   PunctuationToken::Not              =>      "!",
-                   PunctuationToken::And              =>      "&&",
-                   PunctuationToken::Or               =>      "||",
-                   PunctuationToken::Xor              =>      "^",
-                   PunctuationToken::Question         =>      "?",
-                   PunctuationToken::SQuote           =>      "'",
-                   PunctuationToken::DQuote           =>      "\"",
-                   PunctuationToken::TQuote           =>      "\"\"\"",
-                   PunctuationToken::Arrow            =>      "->",
-                   PunctuationToken::DArrow           =>      "=>",
-                   PunctuationToken::DColon           =>      "::",
+                   Punctuation::Dot              =>      ".",
+                   Punctuation::Comma            =>      ",",
+                   Punctuation::SemiColon        =>      ";",
+                   Punctuation::Colon            =>      ":",
+                   Punctuation::Plus             =>      "+",
+                   Punctuation::Minus            =>      "-",
+                   Punctuation::Asterisk         =>      "*",
+                   Punctuation::Slash            =>      "/",
+                   Punctuation::Percentage       =>      "%",
+                   Punctuation::LParenthesis     =>      "(",
+                   Punctuation::RParenthesis     =>      ")",
+                   Punctuation::LBracket         =>      "[",
+                   Punctuation::RBracket         =>      "]",
+                   Punctuation::LBrace           =>      "{",
+                   Punctuation::RBrace           =>      "}",
+                   Punctuation::Less             =>      "<",
+                   Punctuation::Greater          =>      ">",
+                   Punctuation::LessEqual        =>      "<=",
+                   Punctuation::GreaterEqual     =>      ">=",
+                   Punctuation::Equal            =>      "==",
+                   Punctuation::NotEqual         =>      "!=",
+                   Punctuation::Assigment        =>      "=",
+                   Punctuation::Not              =>      "!",
+                   Punctuation::And              =>      "&&",
+                   Punctuation::Or               =>      "||",
+                   Punctuation::Xor              =>      "^",
+                   Punctuation::Question         =>      "?",
+                   Punctuation::SQuote           =>      "'",
+                   Punctuation::DQuote           =>      "\"",
+                   Punctuation::TQuote           =>      "\"\"\"",
+                   Punctuation::Arrow            =>      "->",
+                   Punctuation::DArrow           =>      "=>",
+                   Punctuation::DColon           =>      "::",
                }
         )
     }

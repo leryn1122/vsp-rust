@@ -14,9 +14,9 @@ pub trait SyntaxNode {
 
     fn add_child(&mut self, child: Box<dyn SyntaxNode>);
 
-    fn get_child(&self, ) -> &Vec<Box<dyn SyntaxNode>>;
+    fn get_child(&self) -> &Vec<Box<dyn SyntaxNode>>;
 
-    fn attribute(&self, ) -> Option<&String>;
+    fn attribute(&self) -> Option<&String>;
 
 }
 

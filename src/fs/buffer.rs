@@ -1,14 +1,15 @@
-use std::fmt::{Display, Formatter};
 use std::io::Read;
 
 const BUFFER_SIZE: usize = 8;
 // const BUFFER_SIZE: i8 = 2;
 
+///
 /// Buffer, composed of by two char buffer array.
-#[derive(Debug)]
+///
 pub struct Buffer {
-    buffer_r: [u8; 1 << BUFFER_SIZE],
-    buffer_l: [u8; 1 << BUFFER_SIZE],
+    r_buffer: [u8; 1 << BUFFER_SIZE],
+    l_buffer: [u8; 1 << BUFFER_SIZE],
+    offset: usize,
     pos: usize,
     end: usize,
     flip: bool,
@@ -16,17 +17,18 @@ pub struct Buffer {
 
 impl Buffer {
     pub fn new() -> Self {
-        Buffer {
-            buffer_r: [0u8; 1 << BUFFER_SIZE],
-            buffer_l: [0u8; 1 << BUFFER_SIZE],
+        Self {
+            r_buffer: [0u8; 1 << BUFFER_SIZE],
+            l_buffer: [0u8; 1 << BUFFER_SIZE],
+            offset: 0,
             pos: 0,
             end: 0,
             flip: false,
         }
     }
 
-    #[warn(unused_variables)]
-    pub fn with_capacity(_capacity: usize) -> Self {
+    #[allow(unused_variables)]
+    pub fn with_capacity(capacity: usize) -> Self {
         // TODO
         Buffer::new()
     }
@@ -41,19 +43,23 @@ impl Buffer {
         self.flip = !self.flip;
     }
 
-    pub fn get(&mut self) -> &mut[u8; 1 << BUFFER_SIZE] {
+    fn get(&mut self) -> &mut[u8; 1 << BUFFER_SIZE] {
         if self.flip {
-            &mut self.buffer_r
+            &mut self.r_buffer
         } else {
-            &mut self.buffer_l
+            &mut self.l_buffer
         }
+    }
+
+    #[allow(unused_variables)]
+    fn put(&mut self, byte: u8) {
     }
 
     pub fn at(&mut self, index: usize) -> u8 {
         if self.flip {
-            self.buffer_r[index]
+            self.r_buffer[index]
         } else {
-            self.buffer_l[index]
+            self.l_buffer[index]
         }
     }
 
@@ -73,11 +79,5 @@ impl Buffer {
         let offset: usize = readable.read(self.get()).unwrap();
         self.pos = offset;
         Ok(offset)
-    }
-}
-
-impl Display for Buffer {
-    fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
-        f.write_str("1234")
     }
 }
