@@ -10,6 +10,7 @@ pub fn generate_ast() {
 
 }
 
+//============================================================================//
 pub trait SyntaxNode {
 
     fn add_child(&mut self, child: Box<dyn SyntaxNode>);
@@ -49,4 +50,55 @@ impl SyntaxNode for SyntaxNodeImpl {
             None
         }
     }
+}
+
+
+
+/// Refer to line number.
+type Line = u16;
+
+//============================================================================//
+
+pub enum Statement {
+    Import(Box<Import>),
+    Value,
+    While,
+    For,
+    Expression,
+    Return,
+}
+
+//============================================================================//
+
+/// Indicates the expression which could be valued, such as:
+///
+/// ```plaintext
+/// 1 + (2 * 3) / 4
+/// ```
+///
+pub enum Expression {
+
+}
+
+//============================================================================//
+
+/// Indicates the local variable
+pub enum Variable {
+    Nullptr,
+
+    LocalInt(Line),
+    LocalBool(Line),
+
+    StaticInt(Line),
+    StaticBool(Line),
+}
+
+//============================================================================//
+
+struct Import {
+    pub path: String,
+}
+
+impl Import {
+
 }

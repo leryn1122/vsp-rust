@@ -17,7 +17,6 @@ pub fn parse_token(lexeme: &str) -> Result<Token, std::io::Error> {
         return Ok(Token::Reserve(opt.unwrap()));
     }
 
-
     // log::trace!("lexeme = {}, result = {}", lexeme, identifier_regex.is_match(lexeme));
     if IDENTIFIER_REGEX.is_match(lexeme) {
         return Ok(Token::Identifier(String::from(lexeme)));
@@ -31,6 +30,10 @@ pub fn parse_token(lexeme: &str) -> Result<Token, std::io::Error> {
     Ok(Token::Numeric(lexeme.to_string()))
 }
 
+
+
+//============================================================================//
+
 #[derive(Debug,PartialEq)]
 pub enum Token {
     Identifier(String),
@@ -40,7 +43,11 @@ pub enum Token {
     Literal(String),
 }
 
-// const IDENTIFIER_REGEX: Regex = Regex::new(r#"[\w][\w\d_]*"#).unwrap();
+impl Clone for Token {
+    fn clone(&self) -> Self {
+        todo!()
+    }
+}
 
 /// Reserved word
 #[derive(EnumIter, PartialEq)]
@@ -49,7 +56,7 @@ pub enum ReservedWord {
     As, Async, Await, Break, Const, Continue, Else, Enum, False, Func, For,
 
     // H-N
-    If, Impl, In, Let, Loop, Module,
+    If, Impl, Import, In, Let, Loop, Module,
 
     // O-T
     Public, Ref, Return, Static, Struct, Super, True, Type,
@@ -74,6 +81,7 @@ impl ReservedWord {
             "func"      =>  Some(ReservedWord::Func      ),
             "for"       =>  Some(ReservedWord::For       ),
             "if"        =>  Some(ReservedWord::If        ),
+            "import"    =>  Some(ReservedWord::Import    ),
             "impl"      =>  Some(ReservedWord::Impl      ),
             "in"        =>  Some(ReservedWord::In        ),
             "let"       =>  Some(ReservedWord::Let       ),
@@ -121,6 +129,7 @@ impl Debug for ReservedWord {
                    ReservedWord::For        =>  "for",
                    ReservedWord::If         =>  "if",
                    ReservedWord::Impl       =>  "impl",
+                   ReservedWord::Import     =>  "import",
                    ReservedWord::In         =>  "in",
                    ReservedWord::Let        =>  "let",
                    ReservedWord::Loop       =>  "loop",
@@ -143,6 +152,10 @@ impl Debug for ReservedWord {
         )
     }
 }
+
+
+
+//============================================================================//
 
 ///
 /// Enumeration for mark / fixed token.
@@ -289,25 +302,44 @@ impl Debug for Punctuation {
     }
 }
 
+
+
+//============================================================================//
+
 ///
 /// Token stream
 ///
 #[derive(Debug)]
 pub struct TokenStream {
-    token: Vec<Token>,
+    tokens: Vec<Token>,
+    offset: usize,
 }
 
 impl TokenStream {
 
     pub fn new() -> TokenStream {
         TokenStream {
-            token: Vec::new()
+            tokens: Vec::new(),
+            offset: 0,
         }
     }
 
     #[allow(unused_must_use)]
     pub fn put(&mut self, token: Token) {
-        &self.token.push(token);
+        &self.tokens.push(token);
     }
 
+    pub fn len(&self) -> usize {
+        self.tokens.len()
+    }
+
+    pub fn has_next(&self) -> bool {
+        self.offset < self.len()
+    }
+
+    pub fn next(&mut self) -> &Token {
+        let token = self.tokens.get(self.offset).unwrap();
+        self.offset = self.offset + 1;
+        token
+    }
 }

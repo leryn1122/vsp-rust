@@ -2,6 +2,7 @@ use hashbrown::HashMap;
 use crate::cli::cmd;
 use crate::cli::cmd::Args;
 use crate::compile::lexer::Lexer;
+use crate::compile::parser::Parser;
 
 /// Compiler.
 pub struct Compiler {
@@ -34,7 +35,9 @@ impl Compiler {
 
         let mut lexer = Lexer::new(&self.context.source);
         lexer.read_as_token_stream();
-        lexer.token_stream;
+
+        let mut parser = Parser::from_token_stream(lexer.token_stream);
+        parser.parse();
 
     }
 }
