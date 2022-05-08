@@ -1,9 +1,6 @@
 
 #![allow(dead_code)]
 
-extern crate alloc;
-extern crate core;
-
 pub mod cli;
 pub mod compile;
 pub mod fs;

@@ -7,14 +7,12 @@ use crate::compile::token::{
 };
 use crate::fs::source::SourceFile;
 
-/// Pattern / mode for lexer:
-///   - Trivial for normal;
-///   - SingleQuoted for character;
+/// Mode for lexer:
+///   - Plain for normal;
 ///   - DoubleQuoted for literal string.
 #[derive(PartialEq)]
-pub enum LexerPattern {
-    Trivial,
-    SingleQuoted,
+pub enum ScanMode {
+    Plain,
     DoubleQuoted,
 }
 
@@ -35,104 +33,137 @@ impl Lexer {
             source: SourceFile::File(path.to_str().unwrap().to_string()),
             line: 0,
             buffer: Buffer::new(),
-            status: Status::new(),
+            status: Status::default(),
             token_stream: TokenStream::new(),
         }
     }
 
+    /// Rewrite in the future.
+    #[allow(unused_variables)]
     pub fn read_as_token_stream(&mut self) {
         let mut file = File::open(&self.source.get_path()).unwrap();
         let mut buffer: Buffer = Buffer::new();
 
-        let offset: usize;
-        offset = buffer.read(&mut file).unwrap();
-
-        let mut str_buf: Vec<char> = Vec::with_capacity(1 << 5);
+        // let offset: usize;
+        // offset = buffer.read(&mut file).unwrap();
+        //
+        // let mut str_buf: Vec<char> = Vec::with_capacity(1 << 5);
+        //
+        // let mut token_stream = TokenStream::new();
+        //
+        // // TODO offset should have been replaced by len.
+        // for i in 0 .. offset + 1 {
+        //     let ch : char = buffer.get_char(i);
+        //
+        //     match self.get_pattern() {
+        //         LexerPattern::Plain => {
+        //             // Alphabetic or digit ??
+        //             if ch.is_alphanumeric() || ch == '_' {
+        //                 if str_buf.last().is_some() && str_buf.last().unwrap().is_ascii_punctuation() {
+        //                     put_token_stream(&mut token_stream, &mut str_buf);
+        //                     str_buf.push(ch);
+        //                 } else {
+        //                     str_buf.push(ch);
+        //                 }
+        //             } else if '"' == ch {
+        //                 self.set_pattern(LexerPattern::DoubleQuoted);
+        //             } else if ch.is_whitespace() {
+        //                 if str_buf.len() > 0 {
+        //                     put_token_stream(&mut token_stream, &mut str_buf);
+        //                     str_buf.clear();
+        //                 }
+        //             } else if ch.is_ascii_punctuation() && ch != '_' {
+        //                 if str_buf.len() > 0 {
+        //                     put_token_stream(&mut token_stream, &mut str_buf);
+        //                     str_buf.clear();
+        //                 }
+        //                 str_buf.push(ch);
+        //             } else {
+        //                 if str_buf.len() > 0 {
+        //                     put_token_stream(&mut token_stream, &mut str_buf);
+        //                     str_buf.clear();
+        //                 }
+        //             }
+        //         },
+        //         // Double quoted
+        //         //   All characters are appended, expect another quote.
+        //         LexerPattern::DoubleQuoted => {
+        //             if '"' == ch {
+        //                 put_token_stream(&mut token_stream, &mut str_buf);
+        //                 self.set_pattern(LexerPattern::Plain);
+        //             } else {
+        //                 str_buf.push(ch);
+        //             }
+        //         },
+        //     }
+        //
+        // }
 
         let mut token_stream = TokenStream::new();
 
-        // TODO offset should have been replaced by len.
-        for i in 0 .. offset + 1 {
-            let ch : char = buffer.char_at(i);
+        let mut offset: usize;
+        let mut c_curr: char;
+        let mut str_buf: Vec<char> = Vec::with_capacity(1 << 5);
 
-            match self.get_pattern() {
-                LexerPattern::Trivial => {
-                    // Alphabetic or digit ??
-                    if ch.is_alphanumeric() {
-                        if str_buf.last().is_some() && str_buf.last().unwrap().is_ascii_punctuation() {
-                            put_token_stream(&mut token_stream, &mut str_buf);
-                            str_buf.push(ch);
+        #[allow(unused_labels)]
+        'token_loop: loop {
+            let offset = buffer.read(&mut file).unwrap();
+            if offset == 0 {
+                break;
+            }
+
+            // log::trace!("range = {}", buffer.range());
+            log::info!("array = {}", String::from_utf8(buffer.get_read_array().to_vec()).unwrap());
+
+            for _i in 0 .. buffer.range() {
+                c_curr = buffer.get_char(_i);
+                // log::trace!("c_curr at ({}) is: {}", i, c_curr);
+
+                match self.status.mode {
+                    ScanMode::Plain => {
+                        c_curr;
+
+                    }
+                    ScanMode::DoubleQuoted => {
+                        if buffer.get_char(_i) == '"' {
+                            if buffer.get_char(_i - 1) == '\\' && buffer.get_char(_i - 2) != '\\' {
+                                str_buf.push(c_curr);
+                            } else {
+                                put_token_stream(&mut token_stream, &mut str_buf);
+                            }
                         } else {
-                            str_buf.push(ch);
+                            str_buf.push(c_curr);
                         }
-                    } else if '"' == ch {
-                        self.set_pattern(LexerPattern::DoubleQuoted);
-                    } else if '\'' == ch {
-                        self.set_pattern(LexerPattern::SingleQuoted);
-                    } else if ch.is_whitespace() {
-                        if str_buf.len() > 0 {
-                            put_token_stream(&mut token_stream, &mut str_buf);
-                            str_buf.clear();
-                        }
-                    } else if ch.is_ascii_punctuation() {
-                        if str_buf.len() > 0 {
-                            put_token_stream(&mut token_stream, &mut str_buf);
-                            str_buf.clear();
-                        }
-                        str_buf.push(ch);
-                    } else {
-                        if str_buf.len() > 0 {
-                            put_token_stream(&mut token_stream, &mut str_buf);
-                            str_buf.clear();
-                        }
-                    }
-                },
-                // Double quoted
-                //   All characters are appended, expect another quote.
-                LexerPattern::DoubleQuoted => {
-                    if '"' == ch {
-                        put_token_stream(&mut token_stream, &mut str_buf);
-                        self.set_pattern(LexerPattern::Trivial);
-                    } else {
-                        str_buf.push(ch);
-                    }
-                },
-                // Single quoted
-                //   All characters are appended, expect another quote.
-                LexerPattern::SingleQuoted => {
-                    if '\'' == ch {
-                        put_token_stream(&mut token_stream, &mut str_buf);
-                        self.set_pattern(LexerPattern::Trivial);
-                    } else {
-                        str_buf.push(ch);
                     }
                 }
             }
-
+            buffer.forward(buffer.capacity());
         }
-        log::warn!("token_stream = {:?}", &token_stream);
+
+
+        log::debug!("token_stream = {:?}", &token_stream);
         self.token_stream = token_stream;
     }
 
-    fn get_pattern(&self) -> &LexerPattern {
-        &self.status.pattern
+    fn get_pattern(&self) -> &ScanMode {
+        &self.status.mode
     }
 
-    fn set_pattern(&mut self, pattern: LexerPattern) {
-        self.status.pattern = pattern
+    fn set_pattern(&mut self, mode: ScanMode) {
+        self.status.mode = mode
     }
 
 }
 
 /// Status of lexer.
 struct Status {
-    pub pattern: LexerPattern,
+    pub mode: ScanMode,
 }
 
-impl Status {
-    pub fn new() -> Self {
+impl Default for Status {
+    fn default() -> Self {
         Self {
-            pattern: LexerPattern::Trivial,
+            mode: ScanMode::Plain,
         }
     }
 }

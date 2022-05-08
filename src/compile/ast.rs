@@ -60,7 +60,6 @@ type Line = u16;
 //============================================================================//
 
 pub enum Statement {
-    Import(Box<Import>),
     Value,
     While,
     For,

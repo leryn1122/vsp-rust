@@ -33,12 +33,8 @@ impl Parser {
                     log::trace!("literal = {}", literal);
                 }
                 _ => {
-                    log::trace!("token");
                 }
             }
-
-
-
         }
 
         Ok(stmts)

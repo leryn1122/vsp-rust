@@ -1,35 +1,11 @@
 use std::fmt::Debug;
 use lazy_static::lazy_static;
 use regex::Regex;
-use crate::compile::token::Token::CharConstant;
 use crate::VspResult;
 
 // extern crate strum;
 // extern crate strum_macros;
 // use strum_macros::EnumIter;
-
-lazy_static! {
-    static ref IDENTIFIER_REGEX: Regex = Regex::new(r#"^[A-Za-z][A-Za-z0-9_]*$"#).unwrap();
-    static ref NUMBERIC_REGEX: Regex = Regex::new(r#"^[+-]?([1-9]\d*(\.\d*)?|0\.+\d*|0?\.0+|0)$"#).unwrap();
-}
-
-
-pub fn parse_token(lexeme: &str) -> VspResult<Token> {
-    let opt: Option<Token> = parse_fixed_lexeme_from_str(lexeme);
-    let token: Token;
-    if opt.is_some() {
-        return Ok(opt.unwrap());
-    }
-    if IDENTIFIER_REGEX.is_match(lexeme) {
-        token = Token::Identifier(String::from(lexeme));
-        return Ok(token);
-    }
-    if NUMBERIC_REGEX.is_match(lexeme) {
-        token = Token::Numeric(String::from(lexeme));
-        return Ok(token);
-    }
-    Ok(Token::Error)
-}
 
 //============================================================================//
 
@@ -189,6 +165,71 @@ pub fn parse_fixed_lexeme_from_str(lexeme: &str) -> Option<Token> {
         "::"       => Some(Token::DColon      ),
         _ => None,
     }
+}
+
+
+
+//============================================================================//
+
+lazy_static! {
+    static ref IDENTIFIER_REGEX: Regex = Regex::new(r#"^[A-Za-z][A-Za-z0-9_]*$"#).unwrap();
+    static ref NUMBERIC_REGEX: Regex = Regex::new(r#"^[+-]?([1-9]\d*(\.\d*)?|0\.+\d*|0?\.0+|0)$"#).unwrap();
+}
+
+
+pub fn parse_token(lexeme: &str) -> VspResult<Token> {
+    let opt: Option<Token> = parse_fixed_lexeme_from_str(lexeme);
+    let token: Token;
+    if opt.is_some() {
+        return Ok(opt.unwrap());
+    }
+    if IDENTIFIER_REGEX.is_match(lexeme) {
+        token = Token::Identifier(String::from(lexeme));
+        return Ok(token);
+    }
+    if NUMBERIC_REGEX.is_match(lexeme) {
+        token = Token::Numeric(String::from(lexeme));
+        return Ok(token);
+    }
+    Ok(Token::Error)
+}
+
+pub fn is_reserve_word(token: Token) -> bool {
+    return vec![
+          Token::As
+        , Token::Async
+        , Token::Await
+        , Token::Break
+        , Token::Const
+        , Token::Continue
+        , Token::Else
+        , Token::Enum
+        , Token::False
+        , Token::Func
+        , Token::For
+        , Token::If
+        , Token::Impl
+        , Token::Import
+        , Token::In
+        , Token::Int
+        , Token::Let
+        , Token::Loop
+        , Token::Module
+        , Token::Public
+        , Token::Ref
+        , Token::Return
+        , Token::Static
+        , Token::Struct
+        , Token::Super
+        , Token::True
+        , Token::Type
+        , Token::Union
+        , Token::Unsafe
+        , Token::Use
+        , Token::Var
+        , Token::Where
+        , Token::While
+    ].contains(&token);
 }
 
 //============================================================================//
