@@ -9,6 +9,24 @@ readme = "README.md"
 keywords = ["compiler"]
 license = "MIT"
 
+[[bin]]
+name = "vspc"
+
+[[bin]]
+name = "vspr"
+
+[[bin]]
+name = "vsprepl"
+
+[[bin]]
+name = "vsps"
+
+[[bin]]
+name = "vspstk"
+
+[[bin]]
+name = "vspx"
+
 [lib]
 name = "vsp"
 crate-type = ["rlib", "dylib"]

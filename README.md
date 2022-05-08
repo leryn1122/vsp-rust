@@ -65,10 +65,11 @@ Syntax: AstNode =>
 
 ## Related Efforts
 
-Those repos are referenced:
+Those repos are referenced on:
 
 - [Xie-Jason/GloomScript](https://github.com/Xie-Jason/GloomScript)
 - [douchuan/jvm](https://github.com/douchuan/jvm)
+- [rhaiscript/rhai](https://github1s.com/rhaiscript/rhai)
 
 ## Maintainers
 

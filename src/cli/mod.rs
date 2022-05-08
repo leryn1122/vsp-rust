@@ -3,4 +3,4 @@
 ///
 
 pub mod cmd;
-pub mod init;
+pub mod error;

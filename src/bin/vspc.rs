@@ -1,6 +1,5 @@
 #![allow(dead_code)]
 
-use vsp::cli;
 use vsp::cli::cmd::{
     Args,
     fast_return,
@@ -36,7 +35,7 @@ fn do_print_help_and_exit() {
 fn main() {
     let args = obtain_args();
     fast_return(args.1.clone(), CMD, do_print_help_and_exit);
-    cli::init::init();
+    vsp::init();
     execute(args);
 }
 

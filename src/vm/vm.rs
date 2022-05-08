@@ -7,7 +7,7 @@ pub struct VirtualMachine {
 }
 
 impl VirtualMachine {
-
+    #[inline(always)]
     pub fn new() -> Self {
         VirtualMachine {
             constant_pool: ConstantPool::new(),
@@ -18,5 +18,12 @@ impl VirtualMachine {
     /// Returns the PID.
     pub fn start(&self) -> usize {
         0
+    }
+}
+
+impl Default for VirtualMachine {
+    #[inline(always)]
+    fn default() -> Self {
+        Self::new()
     }
 }

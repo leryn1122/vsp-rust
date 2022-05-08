@@ -29,5 +29,9 @@ fn do_print_help_and_exit() {
 fn main() {
     let args = obtain_args();
     fast_return(args.1.clone(), CMD, do_print_help_and_exit);
+    execute();
+}
+
+fn execute() {
     todo!("TODO: vspstk")
 }

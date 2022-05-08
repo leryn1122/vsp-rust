@@ -5,7 +5,7 @@ use vsp::cli::cmd::{
     obtain_args
 };
 
-pub const CMD: &'static str = "vspx";
+pub const CMD: &'static str = "vsprepl";
 
 fn do_print_help_and_exit() {
     println!(
@@ -18,19 +18,27 @@ fn do_print_help_and_exit() {
     --version     Print version info.
 ",
 //==============================================================================
-    CMD,
+CMD,
     );
     std::process::exit(0);
 }
 
-/// Entrypoint of vsp tool for compression and extraction.
+/// Entrypoint of vsp repl.
 ///
-/// vsp 压缩和解压工具
+/// vsp 交互式解释器
 fn main() {
     let args = obtain_args();
     fast_return(args.1.clone(), CMD, do_print_help_and_exit);
+    execute();
 }
 
+#[allow(unused_labels)]
 fn execute() {
-    todo!("TODO: vspx")
+
+    'main_loop: loop {
+        println!("todo");
+        break;
+    }
+
+    println!("Bye!!");
 }

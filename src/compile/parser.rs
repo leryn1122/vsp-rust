@@ -26,17 +26,14 @@ impl Parser {
                 Token::Identifier(id) => {
                     log::trace!("id = {}", id);
                 }
-                Token::Reserve(reserve) => {
-                    log::trace!("reserve = {}", reserve);
-                }
-                Token::Punctuation(punctuation) => {
-                    log::trace!("punctuation = {}", punctuation);
-                }
                 Token::Numeric(num) => {
                     log::trace!("numeric = {}", num);
                 }
                 Token::Literal(literal) => {
                     log::trace!("literal = {}", literal);
+                }
+                _ => {
+                    log::trace!("token");
                 }
             }
 

@@ -2,9 +2,26 @@ use std::error::Error;
 use std::fmt::{Debug, Display, Formatter};
 
 pub struct LexicalError {
+    msg: String,
 }
 
 impl Error for LexicalError {
+}
+
+impl LexicalError {
+    pub fn from_str(msg: &str) -> Self {
+        Self {
+            msg: msg.to_string()
+        }
+    }
+}
+
+impl LexicalError {
+    pub fn from(msg: Box<dyn ToString>) -> Self {
+        Self {
+            msg: msg.to_string()
+        }
+    }
 }
 
 #[allow(unused_variables)]

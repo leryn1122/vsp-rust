@@ -1,5 +1,5 @@
 use hashbrown::HashMap;
-use crate::std::substring::Substring;
+use crate::fstd::substring::Substring;
 
 /// Tuple of argc and argv.
 pub type Args = (usize, Vec<String>);

@@ -1,9 +1,22 @@
+
 #![allow(dead_code)]
+
+extern crate alloc;
+extern crate core;
 
 pub mod cli;
 pub mod compile;
 pub mod fs;
-pub mod std;
+pub mod fstd;
 pub mod sys;
 pub mod oop;
 pub mod vm;
+
+type VspError = Box<dyn std::error::Error>;
+type VspResult<T> = Result<T, VspError>;
+
+
+/// Initialize the logger.
+pub fn init() {
+    env_logger::init();
+}
