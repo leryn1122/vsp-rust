@@ -1,4 +1,3 @@
-
 #![allow(dead_code)]
 
 pub mod cli;
@@ -8,6 +7,7 @@ pub mod fstd;
 pub mod sys;
 pub mod oop;
 pub mod vm;
+pub mod ctx;
 
 type VspError = Box<dyn std::error::Error>;
 type VspResult<T> = Result<T, VspError>;

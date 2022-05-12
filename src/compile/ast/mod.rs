@@ -1,3 +1,9 @@
+pub mod expr;
+pub mod ns;
+pub mod stmt;
+
+/// Refer to line number.
+type Line = u16;
 
 ///
 /// Polish Notation
@@ -51,11 +57,6 @@ impl SyntaxNode for SyntaxNodeImpl {
         }
     }
 }
-
-
-
-/// Refer to line number.
-type Line = u16;
 
 //============================================================================//
 

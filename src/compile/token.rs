@@ -1,11 +1,12 @@
 use std::fmt::Debug;
 use lazy_static::lazy_static;
 use regex::Regex;
-use crate::VspResult;
-
-// extern crate strum;
-// extern crate strum_macros;
-// use strum_macros::EnumIter;
+use crate::compile::error::{
+    LexicalError,
+    LexicalErrorType,
+    LexicalResult
+};
+use crate::fstd::pos::Position;
 
 //============================================================================//
 
@@ -94,76 +95,79 @@ pub enum Token {
     Error
 }
 
-pub fn parse_fixed_lexeme_from_str(lexeme: &str) -> Option<Token> {
+pub fn parse_fixed_lexeme_from_str(lexeme: &str) -> LexicalResult<Token> {
     return match lexeme {
-        "as"           => Some(Token::As          ),
-        "async"        => Some(Token::Async       ),
-        "await"        => Some(Token::Await       ),
-        "break"        => Some(Token::Break       ),
-        "const"        => Some(Token::Const       ),
-        "continue"     => Some(Token::Continue    ),
-        "else"         => Some(Token::Else        ),
-        "enum"         => Some(Token::Enum        ),
-        "false"        => Some(Token::False       ),
-        "func"         => Some(Token::Func        ),
-        "for"          => Some(Token::For         ),
-        "if"           => Some(Token::If          ),
-        "impl"         => Some(Token::Impl        ),
-        "import"       => Some(Token::Import      ),
-        "in"           => Some(Token::In          ),
-        "int"          => Some(Token::Int         ),
-        "let"          => Some(Token::Let         ),
-        "loop"         => Some(Token::Loop        ),
-        "module"       => Some(Token::Module      ),
-        "public"       => Some(Token::Public      ),
-        "ref"          => Some(Token::Ref         ),
-        "return"       => Some(Token::Return      ),
-        "static"       => Some(Token::Static      ),
-        "struct"       => Some(Token::Struct      ),
-        "super"        => Some(Token::Super       ),
-        "true"         => Some(Token::True        ),
-        "type"         => Some(Token::Type        ),
-        "union"        => Some(Token::Union       ),
-        "unsafe"       => Some(Token::Unsafe      ),
-        "use"          => Some(Token::Use         ),
-        "var"          => Some(Token::Var         ),
-        "where"        => Some(Token::Where       ),
-        "while"        => Some(Token::While       ),
+        "as"           => Ok(Token::As          ),
+        "async"        => Ok(Token::Async       ),
+        "await"        => Ok(Token::Await       ),
+        "break"        => Ok(Token::Break       ),
+        "const"        => Ok(Token::Const       ),
+        "continue"     => Ok(Token::Continue    ),
+        "else"         => Ok(Token::Else        ),
+        "enum"         => Ok(Token::Enum        ),
+        "false"        => Ok(Token::False       ),
+        "func"         => Ok(Token::Func        ),
+        "for"          => Ok(Token::For         ),
+        "if"           => Ok(Token::If          ),
+        "impl"         => Ok(Token::Impl        ),
+        "import"       => Ok(Token::Import      ),
+        "in"           => Ok(Token::In          ),
+        "int"          => Ok(Token::Int         ),
+        "let"          => Ok(Token::Let         ),
+        "loop"         => Ok(Token::Loop        ),
+        "module"       => Ok(Token::Module      ),
+        "public"       => Ok(Token::Public      ),
+        "ref"          => Ok(Token::Ref         ),
+        "return"       => Ok(Token::Return      ),
+        "static"       => Ok(Token::Static      ),
+        "struct"       => Ok(Token::Struct      ),
+        "super"        => Ok(Token::Super       ),
+        "true"         => Ok(Token::True        ),
+        "type"         => Ok(Token::Type        ),
+        "union"        => Ok(Token::Union       ),
+        "unsafe"       => Ok(Token::Unsafe      ),
+        "use"          => Ok(Token::Use         ),
+        "var"          => Ok(Token::Var         ),
+        "where"        => Ok(Token::Where       ),
+        "while"        => Ok(Token::While       ),
 
-        "."        => Some(Token::Dot         ),
-        ","        => Some(Token::Comma       ),
-        ";"        => Some(Token::SemiColon   ),
-        ":"        => Some(Token::Colon       ),
-        "+"        => Some(Token::Plus        ),
-        "-"        => Some(Token::Minus       ),
-        "*"        => Some(Token::Asterisk    ),
-        "/"        => Some(Token::Slash       ),
-        "%"        => Some(Token::Percentage  ),
-        "("        => Some(Token::LParenthesis),
-        ")"        => Some(Token::RParenthesis),
-        "["        => Some(Token::LBracket    ),
-        "]"        => Some(Token::RBracket    ),
-        "{"        => Some(Token::LBrace      ),
-        "}"        => Some(Token::RBrace      ),
-        "<"        => Some(Token::Less        ),
-        ">"        => Some(Token::Greater     ),
-        "<="       => Some(Token::LessEqual   ),
-        ">="       => Some(Token::GreaterEqual),
-        "=="       => Some(Token::Equal       ),
-        "!="       => Some(Token::NotEqual    ),
-        "="        => Some(Token::Assigment   ),
-        "!"        => Some(Token::Not         ),
-        "&&"       => Some(Token::And         ),
-        "||"       => Some(Token::Or          ),
-        "^"        => Some(Token::Xor         ),
-        "?"        => Some(Token::Question    ),
-        "'"        => Some(Token::SQuote      ),
-        "\""       => Some(Token::DQuote      ),
-        "\"\"\""   => Some(Token::TQuote      ),
-        "->"       => Some(Token::Arrow       ),
-        "=>"       => Some(Token::DArrow      ),
-        "::"       => Some(Token::DColon      ),
-        _ => None,
+        "."        => Ok(Token::Dot         ),
+        ","        => Ok(Token::Comma       ),
+        ";"        => Ok(Token::SemiColon   ),
+        ":"        => Ok(Token::Colon       ),
+        "+"        => Ok(Token::Plus        ),
+        "-"        => Ok(Token::Minus       ),
+        "*"        => Ok(Token::Asterisk    ),
+        "/"        => Ok(Token::Slash       ),
+        "%"        => Ok(Token::Percentage  ),
+        "("        => Ok(Token::LParenthesis),
+        ")"        => Ok(Token::RParenthesis),
+        "["        => Ok(Token::LBracket    ),
+        "]"        => Ok(Token::RBracket    ),
+        "{"        => Ok(Token::LBrace      ),
+        "}"        => Ok(Token::RBrace      ),
+        "<"        => Ok(Token::Less        ),
+        ">"        => Ok(Token::Greater     ),
+        "<="       => Ok(Token::LessEqual   ),
+        ">="       => Ok(Token::GreaterEqual),
+        "=="       => Ok(Token::Equal       ),
+        "!="       => Ok(Token::NotEqual    ),
+        "="        => Ok(Token::Assigment   ),
+        "!"        => Ok(Token::Not         ),
+        "&&"       => Ok(Token::And         ),
+        "||"       => Ok(Token::Or          ),
+        "^"        => Ok(Token::Xor         ),
+        "?"        => Ok(Token::Question    ),
+        "'"        => Ok(Token::SQuote      ),
+        "\""       => Ok(Token::DQuote      ),
+        "\"\"\""   => Ok(Token::TQuote      ),
+        "->"       => Ok(Token::Arrow       ),
+        "=>"       => Ok(Token::DArrow      ),
+        "::"       => Ok(Token::DColon      ),
+        _ => {
+            let e = LexicalError::from(LexicalErrorType::UnrecognizedCharacter, Position::NONE);
+            Err(e)
+        },
     }
 }
 
@@ -177,10 +181,10 @@ lazy_static! {
 }
 
 
-pub fn parse_token(lexeme: &str) -> VspResult<Token> {
-    let opt: Option<Token> = parse_fixed_lexeme_from_str(lexeme);
+pub fn parse_token(lexeme: &str) -> LexicalResult<Token> {
+    let opt: LexicalResult<Token> = parse_fixed_lexeme_from_str(lexeme);
     let token: Token;
-    if opt.is_some() {
+    if opt.is_ok() {
         return Ok(opt.unwrap());
     }
     if IDENTIFIER_REGEX.is_match(lexeme) {

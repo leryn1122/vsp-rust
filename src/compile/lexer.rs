@@ -1,26 +1,36 @@
 use std::fs::File;
 use std::path::Path;
-use crate::fs::buffer::Buffer;
 use crate::compile::token::{
     parse_token,
     TokenStream
+};
+use crate::fs::buffer::{
+    Buffer,
+    SimpleBuffer
 };
 use crate::fs::source::SourceFile;
 
 /// Mode for lexer:
 ///   - Plain for normal;
-///   - DoubleQuoted for literal string.
+///   - DoubleQuoted for literal string quoted by `"`
+///   - TripleQuoted for literal text block quoted by `"""`
 #[derive(PartialEq)]
 pub enum ScanMode {
     Plain,
     DoubleQuoted,
+    TripleQuoted,
 }
+
+/// Number separator, i.e. `1_000_000` refers to 1,000,000 literally.
+const NUMBER_SEPARATOR: char = '_';
 
 /// Lexer for a single file.
 pub struct Lexer {
+    /// Source file.
     source: SourceFile,
+    /// Line number.
     line: usize,
-    buffer: Buffer,
+    /// Lexer status.
     status: Status,
     pub token_stream: TokenStream,
 }
@@ -32,18 +42,14 @@ impl Lexer {
         Self {
             source: SourceFile::File(path.to_str().unwrap().to_string()),
             line: 0,
-            buffer: Buffer::new(),
             status: Status::default(),
             token_stream: TokenStream::new(),
         }
     }
 
     /// Rewrite in the future.
-    #[allow(unused_variables)]
+    #[allow(unused_variables,unused_mut)]
     pub fn read_as_token_stream(&mut self) {
-        let mut file = File::open(&self.source.get_path()).unwrap();
-        let mut buffer: Buffer = Buffer::new();
-
         // let offset: usize;
         // offset = buffer.read(&mut file).unwrap();
         //
@@ -99,25 +105,28 @@ impl Lexer {
         //
         // }
 
+        let mut file = File::open(&self.source.get_path()).unwrap();
         let mut token_stream = TokenStream::new();
+        let mut buffer: SimpleBuffer = SimpleBuffer::default();
 
         let mut offset: usize;
         let mut c_curr: char;
         let mut str_buf: Vec<char> = Vec::with_capacity(1 << 5);
 
         #[allow(unused_labels)]
-        'token_loop: loop {
+        'read: loop {
             let offset = buffer.read(&mut file).unwrap();
             if offset == 0 {
                 break;
             }
 
-            // log::trace!("range = {}", buffer.range());
-            log::info!("array = {}", String::from_utf8(buffer.get_read_array().to_vec()).unwrap());
+            log::trace!("range = {}", buffer.range());
+            // log::trace!("buffer = {}", buffer);
+            // log::info!("array = {}", String::from_utf8(buffer.get_read_array().to_vec()).unwrap());
 
-            for _i in 0 .. buffer.range() {
+            'tokenize: for _i in 0 .. buffer.range() {
                 c_curr = buffer.get_char(_i);
-                // log::trace!("c_curr at ({}) is: {}", i, c_curr);
+                log::trace!("c_curr at ({}) is: {}", _i, c_curr);
 
                 match self.status.mode {
                     ScanMode::Plain => {
@@ -126,18 +135,22 @@ impl Lexer {
                     }
                     ScanMode::DoubleQuoted => {
                         if buffer.get_char(_i) == '"' {
-                            if buffer.get_char(_i - 1) == '\\' && buffer.get_char(_i - 2) != '\\' {
+                            if str_buf.ends_with(&['\\', '\\']) {
                                 str_buf.push(c_curr);
                             } else {
                                 put_token_stream(&mut token_stream, &mut str_buf);
+                                self.status.mode = ScanMode::Plain;
                             }
                         } else {
                             str_buf.push(c_curr);
                         }
                     }
+                    ScanMode::TripleQuoted => {
+
+                    }
                 }
             }
-            buffer.forward(buffer.capacity());
+            buffer.forward(0);
         }
 
 
@@ -174,4 +187,7 @@ fn put_token_stream(token_stream: &mut TokenStream, str_buf: &mut Vec<char>) {
         token_stream.put(parse_token(&str).unwrap());
         str_buf.clear();
     }
+}
+
+fn scan_comment() {
 }

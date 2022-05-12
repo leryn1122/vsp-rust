@@ -6,4 +6,6 @@ public interface Iterator {
 
     func next(): Self::Entry;
 
+    func try_next(): Self::Entry;
+
 }

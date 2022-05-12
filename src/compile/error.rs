@@ -1,27 +1,33 @@
+//! Three main kind of errors occurred in the process of compile.
+//!   - LexicalError
+//!   - SyntaxError
+//!   - SemanticError
+
 use std::error::Error;
 use std::fmt::{Debug, Display, Formatter};
+use crate::fstd::pos::Position;
 
+pub type LexicalResult<T> = Result<T, LexicalError>;
+pub type SyntaxResult<T> = Result<T, SyntaxError>;
+pub type SemanticResult<T> = Result<T, SemanticError>;
+
+/// Error encountered when the lexer dealing with the source code.
 pub struct LexicalError {
-    msg: String,
+    pub cause: Box<LexicalErrorType>,
+    pub pos: Position,
+}
+
+impl LexicalError {
+    /// Default constructor.
+    pub fn from(cause: LexicalErrorType, pos: Position) -> Self {
+        Self {
+            cause: Box::new(cause),
+            pos,
+        }
+    }
 }
 
 impl Error for LexicalError {
-}
-
-impl LexicalError {
-    pub fn from_str(msg: &str) -> Self {
-        Self {
-            msg: msg.to_string()
-        }
-    }
-}
-
-impl LexicalError {
-    pub fn from(msg: Box<dyn ToString>) -> Self {
-        Self {
-            msg: msg.to_string()
-        }
-    }
 }
 
 #[allow(unused_variables)]
@@ -37,6 +43,14 @@ impl Display for LexicalError {
         todo!()
     }
 }
+
+#[derive(PartialOrd, PartialEq)]
+pub enum LexicalErrorType {
+    UnexpectedEOF,
+    UnrecognizedCharacter,
+}
+
+//============================================================================//
 
 pub struct SyntaxError {
 }
@@ -57,6 +71,8 @@ impl Display for SyntaxError {
         todo!()
     }
 }
+
+//============================================================================//
 
 pub struct SemanticError {
 }
