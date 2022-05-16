@@ -1,5 +1,3 @@
-#![allow(dead_code)]
-
 use vsp::cli::cmd;
 use vsp::cli::cmd::Args;
 use vsp::compile::Compiler;
@@ -39,8 +37,8 @@ fn main() {
 }
 
 fn execute(args: Args) {
-    let source: String = args.1.get(0).unwrap().to_string();
+    let source: &str = &args.1.get(1).unwrap().to_string();
     let context = Context::from_args(args, do_print_help_and_exit);
-    let compiler = Compiler::new(context, source);
-    compiler.compile();
+    let mut compiler = Compiler::new(context);
+    compiler.compile(source);
 }

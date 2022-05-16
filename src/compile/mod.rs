@@ -2,6 +2,7 @@ use crate::compile::lexer::Lexer;
 use crate::compile::optim::OptimizationLevel;
 use crate::compile::parser::Parser;
 use crate::ctx::Context;
+use crate::fs::source::SourceFile;
 use crate::VspResult;
 
 pub mod error;
@@ -11,32 +12,31 @@ mod lexer;
 mod optim;
 mod parser;
 mod token;
+mod tokenizer;
 
 
 /// Compiler.
 pub struct Compiler {
     /// Compiler context.
     pub(crate) context: Context,
-    /// Entrypoint source to compile.
-    pub(crate) source: String,
     /// Level of optimization.
     pub(crate) optimization_level: OptimizationLevel,
 }
 
 impl Compiler {
 
-    pub fn new(context: Context, source: String) -> Self {
+    pub fn new(context: Context) -> Self {
         Compiler {
             context,
-            source,
             optimization_level: OptimizationLevel::default(),
         }
     }
 
     /// Main entrypoint to compile the source code.
     #[inline(always)]
-    pub fn compile(&self) -> VspResult<()> {
+    pub fn compile(&mut self, source: &str) -> VspResult<()> {
         self.compile_with_optimization(
+            source,
             OptimizationLevel::default()
         )
     }
@@ -44,10 +44,12 @@ impl Compiler {
     /// Compile the source code with the given optimization level.
     #[inline(always)]
     pub fn compile_with_optimization(
-        &self,
+        &mut self,
+        source: &str,
         optimization_level: OptimizationLevel
     ) -> VspResult<()> {
-        // let mut f_src = SourceFile::from_path(&self.context.source);
+        let source_file = SourceFile::from_path(source).unwrap();
+        source_file.read();
         // match f_src {
         //     SourceFile::Dir(d) => {
         //         println!("dir = {}", d);
@@ -62,7 +64,9 @@ impl Compiler {
         //     }
         // }
 
-        let mut lexer = Lexer::new(&self.source);
+        self.optimization_level = optimization_level;
+
+        let mut lexer = Lexer::new(&source);
         lexer.read_as_token_stream();
 
         let mut parser = Parser::from_token_stream(lexer.token_stream);

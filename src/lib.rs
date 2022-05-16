@@ -9,9 +9,13 @@ pub mod oop;
 pub mod vm;
 pub mod ctx;
 
-type VspError = Box<dyn std::error::Error>;
-type VspResult<T> = Result<T, VspError>;
+/// Public error type.
+pub type VspError = Box<dyn std::error::Error>;
+/// Public result type.
+pub type VspResult<T> = Result<T, VspError>;
 
+pub type SmartVec<T> = smallvec::SmallVec<[T; 1<<2]>;
+// pub type SmartString = smartString::SmartString;
 
 /// Initialize the logger.
 pub fn init() {

@@ -42,6 +42,11 @@ pub fn fast_return(argv: Vec<String>, cmd: &str, help_hook: fn() -> ()) {
     if argv.len() < 2 {
         help_hook();
     }
+    fast_return_without_primary_args(argv, cmd, help_hook);
+}
+
+/// Refers to `fast_return` but never check the first / primary arguments.
+pub fn fast_return_without_primary_args(argv: Vec<String>, cmd: &str, help_hook: fn() -> ()) {
     if argv.contains(&"--help".to_string()) {
         help_hook();
     }

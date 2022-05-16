@@ -1,9 +1,7 @@
 use std::fs::File;
 use std::path::Path;
-use crate::compile::token::{
-    parse_token,
-    TokenStream
-};
+use crate::compile::token::parse_token;
+use crate::compile::tokenizer::TokenStream;
 use crate::fs::buffer::{
     Buffer,
     SimpleBuffer

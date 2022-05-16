@@ -1,6 +1,7 @@
 use crate::compile::ast::Statement;
 use crate::compile::error::SyntaxError;
-use crate::compile::token::{Token, TokenStream};
+use crate::compile::token::Token;
+use crate::compile::tokenizer::TokenStream;
 
 pub struct Parser {
     tokens: TokenStream,

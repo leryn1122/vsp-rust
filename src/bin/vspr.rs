@@ -1,5 +1,3 @@
-#![allow(dead_code)]
-
 use vsp::cli::cmd;
 
 pub const CMD: &'static str = "vspr";
