@@ -1,9 +1,6 @@
 #![allow(dead_code)]
 
-use vsp::cli::cmd::{
-    fast_return,
-    obtain_args
-};
+use vsp::cli::cmd;
 
 pub const CMD: &'static str = "vsprepl";
 
@@ -27,8 +24,8 @@ CMD,
 ///
 /// vsp 交互式解释器
 fn main() {
-    let args = obtain_args();
-    fast_return(args.1.clone(), CMD, do_print_help_and_exit);
+    let args = cmd::obtain_args();
+    cmd::fast_return(args.1.clone(), CMD, do_print_help_and_exit);
     execute();
 }
 

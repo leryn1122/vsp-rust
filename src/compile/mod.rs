@@ -1,19 +1,26 @@
 use crate::compile::lexer::Lexer;
+use crate::compile::optim::OptimizationLevel;
 use crate::compile::parser::Parser;
 use crate::ctx::Context;
+use crate::VspResult;
 
 pub mod error;
 
 mod ast;
 mod lexer;
+mod optim;
 mod parser;
 mod token;
 
 
 /// Compiler.
 pub struct Compiler {
-    pub context: Context,
-    pub source: String,
+    /// Compiler context.
+    pub(crate) context: Context,
+    /// Entrypoint source to compile.
+    pub(crate) source: String,
+    /// Level of optimization.
+    pub(crate) optimization_level: OptimizationLevel,
 }
 
 impl Compiler {
@@ -22,10 +29,24 @@ impl Compiler {
         Compiler {
             context,
             source,
+            optimization_level: OptimizationLevel::default(),
         }
     }
 
-    pub fn compile(&self) {
+    /// Main entrypoint to compile the source code.
+    #[inline(always)]
+    pub const fn compile(&self) -> VspResult<()> {
+        self.compile_with_optimization(
+            OptimizationLevel::default()
+        )
+    }
+
+    /// Compile the source code with the given optimization level.
+    #[inline(always)]
+    pub const fn compile_with_optimization(
+        &self,
+        optimization_level: OptimizationLevel
+    ) -> VspResult<()> {
         // let mut f_src = SourceFile::from_path(&self.context.source);
         // match f_src {
         //     SourceFile::Dir(d) => {
@@ -47,6 +68,7 @@ impl Compiler {
         let mut parser = Parser::from_token_stream(lexer.token_stream);
         parser.parse();
 
+        Ok(())
     }
 }
 
