@@ -35,7 +35,7 @@ impl Compiler {
 
     /// Main entrypoint to compile the source code.
     #[inline(always)]
-    pub const fn compile(&self) -> VspResult<()> {
+    pub fn compile(&self) -> VspResult<()> {
         self.compile_with_optimization(
             OptimizationLevel::default()
         )
@@ -43,7 +43,7 @@ impl Compiler {
 
     /// Compile the source code with the given optimization level.
     #[inline(always)]
-    pub const fn compile_with_optimization(
+    pub fn compile_with_optimization(
         &self,
         optimization_level: OptimizationLevel
     ) -> VspResult<()> {
