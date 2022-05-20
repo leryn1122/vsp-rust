@@ -32,6 +32,7 @@ impl SourceFile {
     /// Determines whether a source file is a text file / directory or a zip file.
     /// A zip file must begin with `8075 0304`, magic number of zip. Only condition
     /// is the correct magic number
+    #[must_use]
     pub fn from_path(path: &str) -> VspResult<SourceFile> {
         match Path::new(&*path).canonicalize() {
             Err(e) => {
@@ -41,32 +42,44 @@ impl SourceFile {
                 std::process::exit(1);
             },
             Ok(filename) => {
-                return if filename.is_dir() {
-                    Ok(SourceFile::Dir(stringify_path_buf(&filename)))
-                } else {
-                    let mut file = File::open(&filename).unwrap_or_else(
-                        | e | {
-                            eprintln!("Failed to open the source code: {}\n{}",
-                                      stringify_path_buf(&filename),
-                                      e);
-                            std::process::exit(1);
-                        }
-                    );
-                    let mut magic_number = [0u8; 4];
-                    file.read(&mut magic_number).unwrap();
-                    if magic_number.starts_with(MAGIC_NUMBER_OF_ZIP) {
-                        Ok(SourceFile::Zip(stringify_path_buf(&filename),
-                                           ZipArchive::new(file).unwrap()))
-                    } else {
-                        Ok(SourceFile::File(stringify_path_buf(&filename)))
+                if filename.is_dir() {
+                    return Ok(SourceFile::Dir(stringify_path_buf(&filename)))
+                }
+
+                let mut file = File::open(&filename).unwrap_or_else(
+                    | e | {
+                        eprintln!("Failed to open the source code: {}\n{}",
+                                  stringify_path_buf(&filename),
+                                  e);
+                        std::process::exit(1);
                     }
+                );
+                let mut magic_number = [0u8; 4];
+                file.read(&mut magic_number).unwrap();
+                if magic_number.starts_with(MAGIC_NUMBER_OF_ZIP) {
+                    return Ok(SourceFile::Zip(stringify_path_buf(&filename),
+                                       ZipArchive::new(file).unwrap()));
+                } else {
+                    return Ok(SourceFile::File(stringify_path_buf(&filename)));
                 }
             }
         };
-
     }
 
     pub fn read(&self) {
+        match self {
+            SourceFile::Dir(_) => {
+                todo!("TODO: Read zip file")
+            }
+            SourceFile::File(filename) => {
+                // Already validated in ctxor.
+                let mut file = File::open(&filename).unwrap();
+                read_file_with_validation(&mut file);
+            }
+            SourceFile::Zip(_, _) => {
+                todo!("TODO: Read zip file")
+            }
+        }
     }
 
     pub fn get_path(&self) -> &str {
@@ -79,6 +92,8 @@ impl SourceFile {
 
 }
 
+/// Source file statistics information, to determine whether the source file has
+/// been changed.
 #[derive(Debug)]
 pub struct SourceFileInfo {
     pub last_modified: String,
@@ -122,3 +137,6 @@ pub(crate) fn stringify_path_buf(p: &PathBuf) -> String {
     p.as_os_str().to_str().unwrap().to_string()
 }
 
+fn read_file_with_validation(file: &mut File) {
+    println!("{}", file.metadata().unwrap().is_file());
+}

@@ -4,68 +4,26 @@ pub mod stmt;
 
 /// Refer to line number.
 type Line = u16;
-
-///
-/// Polish Notation
-///
-/// ```plaintext
-/// 9 - 5       ==> 9 5 -
-/// 9 - (5 + 2) ==> 9 5 2 + -
-/// ```
-pub fn generate_ast() {
-
-}
-
-//============================================================================//
-// pub trait SyntaxNode {
-//
-//     fn add_child(&mut self, child: Box<dyn SyntaxNode>);
-//
-//     fn get_child(&self) -> &Vec<Box<dyn SyntaxNode>>;
-//
-//     fn attribute(&self) -> Option<&String>;
-//
-// }
-//
-// pub struct SyntaxNodeImpl {
-//     pub attribute: String,
-//     pub children: Vec<Box<dyn SyntaxNode>>
-// }
-//
-// impl SyntaxNodeImpl {
-//
-//     fn new() -> SyntaxNodeImpl {
-//         todo!()
-//     }
-// }
-//
-// impl SyntaxNode for SyntaxNodeImpl {
-//
-//     fn add_child(&mut self, child: Box<dyn SyntaxNode>) {
-//         self.children.push(child)
-//     }
-//
-//     fn get_child(&self) -> &Vec<Box<dyn SyntaxNode>> {
-//         &self.children
-//     }
-//
-//     fn attribute(&self) -> Option<&String> {
-//         if self.children.len() == 0 {
-//             Some(&self.attribute)
-//         } else {
-//             None
-//         }
-//     }
-// }
-
-//============================================================================//
-
+/// Line numbers where the statement block lies.
+type LineNumbers = (Line, Line);
+/// Identifier in AST.
 pub type Identifier = String;
+///
 pub type StatementBlock = crate::SmartVec<Statement>;
 
 pub struct SyntaxNode {
-    op: String,
+    op: Identifier,
     stmt: StatementBlock,
+}
+
+impl Default for SyntaxNode {
+    #[inline(always)]
+    fn default() -> Self {
+        Self {
+            op: String::from(""),
+            stmt: StatementBlock::new(),
+        }
+    }
 }
 
 //============================================================================//

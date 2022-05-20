@@ -27,12 +27,12 @@ fn do_print_help_and_exit() {
 /// The instinct is very simple inspired by JVM.
 /// When a runtime program ran through `vspr`, it created a file named with process
 /// ID with content of process.
-/// The default location is a directory named `vsprefdata` appending the current
+/// The default location is a directory named `vsproc.d` appending the current
 /// username under the system temporary directory:
 ///
 /// ```
-/// /tmp/vsprefdata_root                   (Linux)
-/// %SystemRoot%\TEMP\vsprefdata_root      (Windows)
+/// /tmp/vsproc.d/root                   (Linux)
+/// %SystemRoot%\TEMP\vsproc.d\root      (Windows)
 /// ```
 ///
 fn main() {

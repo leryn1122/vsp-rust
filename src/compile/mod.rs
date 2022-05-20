@@ -50,19 +50,6 @@ impl Compiler {
     ) -> VspResult<()> {
         let source_file = SourceFile::from_path(source).unwrap();
         source_file.read();
-        // match f_src {
-        //     SourceFile::Dir(d) => {
-        //         println!("dir = {}", d);
-        //         todo!("dir");
-        //     },
-        //     SourceFile::TextFile(f) => {
-        //         println!("file = {}", f);
-        //         todo!("file");
-        //     },
-        //     SourceFile::Zip => {
-        //         todo!("zip");
-        //     }
-        // }
 
         self.optimization_level = optimization_level;
 
